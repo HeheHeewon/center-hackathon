@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="login-container">
+    <h2>(서비스 이름) 에 로그인 하세요</h2>
+    <form action="/login" method="post">
+        <div th:if="${param.error}">사용자 EMAIL 또는 비밀번호를 확인하세요.</div>
+        <input type="email" name="username" placeholder="이메일" required>
+        <input type="password" name="password" placeholder="암호" required>
+        <button type="submit">로그인</button>
+    </form>
+    <a href="#">암호를 잊으셨습니까?</a>
+    <a href="/signup">(서비스 이름) ID가 없으십니까? 지금 만드세요.</a>
+</div>
+</body>
+</html>

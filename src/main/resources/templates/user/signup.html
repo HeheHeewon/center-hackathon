@@ -1,0 +1,117 @@
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org" lang="ko">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>회원 가입</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--<h1>회원 가입</h1>-->
+<!--<div id="message" style="color: red;"></div>-->
+<!--<form id="signupForm" method="post">-->
+<!--    <div>-->
+<!--        <label for="email">이메일:</label>-->
+<!--        <input type="email" id="email" name="email" required>-->
+<!--    </div>-->
+<!--    <div>-->
+<!--        <label for="password">비밀번호:</label>-->
+<!--        <input type="password" id="password" name="password" required>-->
+<!--    </div>-->
+<!--    <div>-->
+<!--        <label for="confirmPassword">비밀번호 확인:</label>-->
+<!--        <input type="password" id="confirmPassword" name="confirmPassword" required>-->
+<!--    </div>-->
+<!--    <div>-->
+<!--        <button type="submit">가입하기</button>-->
+<!--    </div>-->
+<!--</form>-->
+
+<!--<script>-->
+<!--    $(document).ready(function() {-->
+<!--        $('#signupForm').submit(function(event) {-->
+<!--            event.preventDefault();-->
+
+<!--            const formData = {-->
+<!--                email: $('#email').val(),-->
+<!--                password: $('#password').val(),-->
+<!--                confirmPassword: $('#confirmPassword').val()-->
+<!--            };-->
+
+<!--            $.ajax({-->
+<!--                type: 'POST',-->
+<!--                url: '/signup',-->
+<!--                data: JSON.stringify(formData),-->
+<!--                contentType: 'application/json; charset=utf-8',-->
+<!--                dataType: 'json',-->
+<!--                success: function(data) {-->
+<!--                    $('#message').text(data.message).css('color', 'green');-->
+<!--                    window.location.href = 'http://localhost:8080/';-->
+<!--                },-->
+<!--                error: function(response) {-->
+<!--                    const errorMessage = response.responseJSON ? response.responseJSON.message : '회원가입 중 오류가 발생했습니다.';-->
+<!--                    $('#message').text(errorMessage).css('color', 'red');-->
+<!--                }-->
+<!--            });-->
+<!--        });-->
+<!--    });-->
+<!--</script>-->
+<!--</body>-->
+<!--</html>-->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>회원 가입</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<h1>회원 가입</h1>
+<div id="message" style="color: red;"></div>
+<div>
+    <label for="email">이메일:</label>
+    <input type="email" id="email" required>
+</div>
+<div>
+    <label for="password">비밀번호:</label>
+    <input type="password" id="password" required>
+</div>
+<div>
+    <label for="confirmPassword">비밀번호 확인:</label>
+    <input type="password" id="confirmPassword" required>
+</div>
+<button onclick="submitSignup()">가입하기</button>
+
+<script>
+    function submitSignup() {
+        const email = $('#email').val();
+        const password = $('#password').val();
+        const confirmPassword = $('#confirmPassword').val();
+
+        if (!email || !password || !confirmPassword) {
+            $('#message').text('모든 필드를 채워주세요.').css('color', 'red');
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            $('#message').text('비밀번호가 일치하지 않습니다.').css('color', 'red');
+            return;
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '/signup',
+            contentType: 'application/json',
+            data: JSON.stringify({ email, password, confirmPassword }),
+            success: function(data) {
+                $('#message').text(data.message).css('color', 'green');
+                if (data.redirectUrl) {
+                    window.location.href = data.redirectUrl;
+                }
+            },
+            error: function(xhr, status, error) {
+                $('#message').text('회원가입 실패: ' + xhr.responseText).css('color', 'red');
+            }
+        });
+    }
+</script>
+</body>
+</html>
