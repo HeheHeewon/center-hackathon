@@ -8,8 +8,8 @@
 <body>
 <nav>
     <ul>
-        <li><a sec:authorize="isAnonymous()" href="/login">로그인</a></li>
-        <li><a sec:authorize="isAuthenticated()" href="/logout">로그아웃</a></li>
+        <li><a sec:authorize="isAnonymous()" href="/login">로그인</a>
+            <a sec:authorize="isAuthenticated()" href="/logout">로그아웃</a></li>
     </ul>
 </nav>
 </body>

@@ -99,7 +99,8 @@
         $.ajax({
             type: 'POST',
             url: '/signup',
-            contentType: 'application/json',
+            contentType: 'application/json; charset=utf-8',
+            dataType:'json',
             data: JSON.stringify({ email, password, confirmPassword }),
             success: function(data) {
                 $('#message').text(data.message).css('color', 'green');
