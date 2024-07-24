@@ -5,6 +5,7 @@ function WorkTimeTracker() {
     const [currentWorkTimeId, setCurrentWorkTimeId] = useState(null);
     const [timer, setTimer] = useState(0);
     const [intervalId, setIntervalId] = useState(null);
+    const [isPaused, setIsPaused] = useState(false);
 
     useEffect(() => {
         fetchWorkTimes();
@@ -27,6 +28,7 @@ function WorkTimeTracker() {
                     setTimer(prevTimer => prevTimer + 1);
                 }, 1000);
                 setIntervalId(id);
+                setIsPaused(false);
             })
             .catch(error => console.error('Error starting work:', error));
     };
@@ -38,9 +40,38 @@ function WorkTimeTracker() {
                 .then(response => response.json())
                 .then(() => {
                     setCurrentWorkTimeId(null);
+                    setIsPaused(false);
+                    setTimer(0);
                     fetchWorkTimes();
                 })
                 .catch(error => console.error('Error ending work:', error));
+        }
+    };
+
+    const pauseWork = () => {
+        if (currentWorkTimeId && !isPaused) {
+            clearInterval(intervalId);
+            fetch(`/api/worktime/pause/${currentWorkTimeId}`, { method: 'POST' })
+                .then(response => response.json())
+                .then(() => {
+                    setIsPaused(true);
+                })
+                .catch(error => console.error('Error pausing work:', error));
+        }
+    };
+
+    const resumeWork = () => {
+        if (currentWorkTimeId && isPaused) {
+            fetch(`/api/worktime/resume/${currentWorkTimeId}`, { method: 'POST' })
+                .then(response => response.json())
+                .then(() => {
+                    setIsPaused(false);
+                    const id = setInterval(() => {
+                        setTimer(prevTimer => prevTimer + 1);
+                    }, 1000);
+                    setIntervalId(id);
+                })
+                .catch(error => console.error('Error resuming work:', error));
         }
     };
 
@@ -54,8 +85,10 @@ function WorkTimeTracker() {
     return (
         <div>
             <h1>Work Time Tracker</h1>
-            <button onClick={startWork}>Start Work</button>
-            <button onClick={endWork}>End Work</button>
+            <button onClick={startWork} disabled={currentWorkTimeId && !isPaused}>Start Work</button>
+            <button onClick={pauseWork} disabled={!currentWorkTimeId || isPaused}>Pause Work</button>
+            <button onClick={resumeWork} disabled={!currentWorkTimeId || !isPaused}>Resume Work</button>
+            <button onClick={endWork} disabled={!currentWorkTimeId}>End Work</button>
             {currentWorkTimeId && (
                 <div>
                     <h2>Current Work Time: {formatTime(timer)}</h2>

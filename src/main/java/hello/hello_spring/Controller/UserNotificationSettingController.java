@@ -4,6 +4,9 @@ import hello.hello_spring.Service.UserNotificationSettingService;
 import hello.hello_spring.entity.UserNotificationSetting;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/notification")
 public class UserNotificationSettingController {
@@ -18,6 +21,7 @@ public class UserNotificationSettingController {
 
     @PostMapping("/{userId}")
     public UserNotificationSetting updateNotificationSetting(@PathVariable Long userId, @RequestBody int interval) {
+        // int interval = request.get("interval");
         return service.updateNotificationSetting(userId, interval);
     }
 }

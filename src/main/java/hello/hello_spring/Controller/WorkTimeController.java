@@ -3,8 +3,10 @@ package hello.hello_spring.Controller;
 import hello.hello_spring.entity.WorkTime;
 import hello.hello_spring.Service.WorkTimeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Provider;
 import java.time.LocalDateTime;
@@ -27,11 +29,24 @@ public class WorkTimeController {
         return workTimeService.endWork(id);
     }
 
-    @GetMapping
-    public List<WorkTime> getAllWorkTimes() {
-        return workTimeService.getAllWorkTimes();
+    @PostMapping("/pause/{id}")
+    public WorkTime pauseWork(@PathVariable Long id) {
+        return workTimeService.pauseWork(id);
     }
 
+    @PostMapping("/resume/{id}")
+    public WorkTime resumeWork(@PathVariable Long id) {
+        return workTimeService.resumeWork(id);
+    }
+
+    @GetMapping
+    public List<WorkTime> getAllWorkTimes() {
+
+        return workTimeService.getAllWorkTimes();
+    }
+}
+
+    /*
     @GetMapping("/daily")
     public List<WorkTime> getDailyWorkTimes(@RequestParam String date) {
         LocalDateTime dateTime = LocalDateTime.parse(date);
@@ -50,3 +65,4 @@ public class WorkTimeController {
         return workTimeService.getMonthlyWorkTimes(dateTime);
     }
 }
+     */
