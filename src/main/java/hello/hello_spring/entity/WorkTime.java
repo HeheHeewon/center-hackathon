@@ -1,5 +1,6 @@
 package hello.hello_spring.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,21 +26,6 @@ public class WorkTime {
     private Duration totalPauseDuration = Duration.ZERO;
     private LocalDateTime lastPauseTime;
 
-    /*
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public LocalDateTime getStartTime() { return startTime; }
-    public void setStartTime(LocalDateTime startTime) { this.startTime = startTime; }
-    public LocalDateTime getEndTime() { return endTime; }
-    public void setEndTime(LocalDateTime endTime) { this.endTime = endTime; }
-    public boolean isPaused() { return isPaused; }
-    public void setPaused(boolean paused) { isPaused = paused; }
-    public Duration getTotalPauseDuration() { return totalPauseDuration; }
-    public void setTotalPauseDuration(Duration totalPauseDuration) { this.totalPauseDuration = totalPauseDuration; }
-    public LocalDateTime getLastPauseTime() { return lastPauseTime; }
-    public void setLastPauseTime(LocalDateTime lastPauseTime) { this.lastPauseTime = lastPauseTime; }
-     */
-
     public void pause() {
         if (!isPaused) {
             this.lastPauseTime = LocalDateTime.now();
@@ -55,20 +41,39 @@ public class WorkTime {
             this.isPaused = false;
         }
     }
+    @JsonProperty("effectiveWorkDurationInSeconds")
+    public long getEffectiveWorkDurationSeconds() {
+        if (startTime != null) {
+            LocalDateTime effectiveEndTime = endTime != null ? endTime : LocalDateTime.now();
+            Duration workDuration = Duration.between(startTime, effectiveEndTime);
+            return workDuration.minus(totalPauseDuration != null ? totalPauseDuration : Duration.ZERO).getSeconds();
+        }
+        return 0;
+    }
 
+    /* @JsonProperty("effectiveWorkDuration")
     public Duration getEffectiveWorkDuration() {
-        if (startTime != null && endTime != null) {
+        if (startTime != null) {
             LocalDateTime effectiveEndTime = endTime != null ? endTime : LocalDateTime.now();
             Duration workDuration = Duration.between(startTime, effectiveEndTime);
             return workDuration.minus(totalPauseDuration != null ? totalPauseDuration : Duration.ZERO);
         }
         return Duration.ZERO;
     }
-    public Duration getTotalWorkDuration() {
+
+     */
+
+    @JsonProperty("totalWorkDurationInSeconds")
+    public long getTotalWorkDuration() {
         if (startTime != null) {
             LocalDateTime effectiveEndTime = endTime != null ? endTime : LocalDateTime.now();
-            return Duration.between(startTime, effectiveEndTime);
+            return Duration.between(startTime, effectiveEndTime).getSeconds();
         }
-        return Duration.ZERO;
+        return 0;
+    }
+
+    @JsonProperty("totalPauseDurationInSeconds")
+    public long getTotalPauseDurationInSeconds() {
+        return (totalPauseDuration != null ? totalPauseDuration : Duration.ZERO).getSeconds();
     }
 }

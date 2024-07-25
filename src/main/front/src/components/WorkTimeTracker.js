@@ -14,7 +14,14 @@ function WorkTimeTracker() {
     const fetchWorkTimes = () => {
         fetch('/api/worktime')
             .then(response => response.json())
-            .then(data => setWorkTimes(data))
+            .then(data => {
+                const convertedData = data.map(workTime => ({
+                    ...workTime,
+                    startTime: new Date(new Date(workTime.startTime).toLocaleString("en-US", { timeZone: "Asia/Seoul" })),
+                    endTime: workTime.endTime ? new Date(new Date(workTime.endTime).toLocaleString("en-US", { timeZone: "Asia/Seoul" })) : null
+                }));
+                setWorkTimes(convertedData);
+            })
             .catch(error => console.error('Error fetching work times:', error));
     };
 
@@ -98,8 +105,11 @@ function WorkTimeTracker() {
             <ul>
                 {workTimes.map(workTime => (
                     <li key={workTime.id}>
-                        Start: {new Date(workTime.startTime).toLocaleString()}<br />
-                        End: {workTime.endTime ? new Date(workTime.endTime).toLocaleString() : 'Ongoing'}
+                        Start: {new Date(workTime.startTime).toLocaleString("en-US", { timeZone: "Asia/Seoul" })}<br />
+                        End: {workTime.endTime ? new Date(workTime.endTime).toLocaleString("en-US", { timeZone: "Asia/Seoul" }) : 'Ongoing'}<br />
+                        Total Work Duration: {formatTime(workTime.totalWorkDurationInSeconds)}<br />
+                        Effective Work Duration: {formatTime(workTime.effectiveWorkDurationInSeconds)}<br />
+                        Total Pause Duration: {formatTime(workTime.totalPauseDurationInSeconds)}
                     </li>
                 ))}
             </ul>
