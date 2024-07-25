@@ -105,8 +105,8 @@ function WorkTimeTracker() {
             <ul>
                 {workTimes.map(workTime => (
                     <li key={workTime.id}>
-                        Start: {new Date(workTime.startTime).toLocaleString("en-US", { timeZone: "Asia/Seoul" })}<br />
-                        End: {workTime.endTime ? new Date(workTime.endTime).toLocaleString("en-US", { timeZone: "Asia/Seoul" }) : 'Ongoing'}<br />
+                        Start: {new Date(workTime.startTime).toLocaleString("en-US", { timeZone: "Asia/Seoul", hour12: true })}<br />
+                        End: {workTime.endTime ? new Date(workTime.endTime).toLocaleString("en-US", { timeZone: "Asia/Seoul", hour12: true }) : 'Ongoing'}<br />
                         Total Work Duration: {formatTime(workTime.totalWorkDurationInSeconds)}<br />
                         Effective Work Duration: {formatTime(workTime.effectiveWorkDurationInSeconds)}<br />
                         Total Pause Duration: {formatTime(workTime.totalPauseDurationInSeconds)}
