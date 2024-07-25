@@ -52,10 +52,11 @@ function WorkTimeChart() {
             .then(response => response.json())
             .then(data => {
                 const minutesData = Object.keys(data).reduce((acc, hour) => {
-                    acc[hour] = (data[hour] / 60).toFixed(2);
+                    acc[hour] = (data[hour] / 60).toFixed(3);
                     return acc;
                 }, {});
                 setWorkHours(minutesData);
+
                 const totalMinutes = Object.values(minutesData).reduce((acc, curr) => acc + parseFloat(curr), 0);
                 setTotalWorkDuration(totalMinutes);
             })
@@ -70,7 +71,7 @@ function WorkTimeChart() {
             .then(response => response.json())
             .then(data => {
                 const hoursData = Object.keys(data).reduce((acc, day) => {
-                    acc[day] = (data[day] / 3600).toFixed(2);
+                    acc[day] = (data[day] / 3600).toFixed(3); // 초를 시간 단위로 변환
                     return acc;
                 }, {});
                 setWeeklyWorkHours(hoursData);
@@ -271,6 +272,8 @@ function WorkTimeChart() {
             },
         },
     };
+
+    console.log('Chart data:', dailyData, weeklyData, monthlyData);
 
     return (
         <div>
