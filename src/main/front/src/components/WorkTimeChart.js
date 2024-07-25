@@ -83,11 +83,13 @@ function WorkTimeChart() {
         fetch(`/api/worktime/monthly?year=${year}`)
             .then(response => response.json())
             .then(data => {
+                console.log("Monthly data from server:", data); // 서버에서 받은 데이터를 콘솔에 출력하여 확인
                 const hoursData = Object.keys(data).reduce((acc, month) => {
                     acc[month] = (data[month] / 3600).toFixed(2);
                     return acc;
                 }, {});
                 setMonthlyWorkHours(hoursData);
+                console.log("Processed monthly work hours:", hoursData); // 상태 설정 후 데이터를 콘솔에 출력하여 확인
             })
             .catch(error => console.error('Error fetching monthly work hours:', error));
     };
