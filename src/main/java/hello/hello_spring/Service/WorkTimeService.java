@@ -19,11 +19,9 @@ import org.slf4j.LoggerFactory;
 public class WorkTimeService {
 
     private static final Logger logger = LoggerFactory.getLogger(WorkTimeService.class);
-    private static final Duration MAX_WORK_DURATION = Duration.ofHours(10); // 최대 작업 시간 설정
 
-    // 작업을 진행한 후 8시간이 지나면 자동으로 작업이 종료되도록 설정
-    // private static final Duration AUTO_END_DURATION = Duration.ofHours(8);
-    // private static final Duration AUTO_END_DURATION = Duration.ofMinutes(3); // 자동 종료 시간 설정
+    // 종료 버튼을 누르지 않고 10시간이 지나면 자동으로 작업이 종료되도록 설정
+    private static final Duration MAX_WORK_DURATION = Duration.ofHours(10); // 최대 작업 시간 설정
 
 
     @Autowired
@@ -78,7 +76,8 @@ public class WorkTimeService {
 
      */
 
-    /* public WorkTime endWork(Long id) {
+    /*
+    public WorkTime endWork(Long id) {
         Optional<WorkTime> optionalWorkTime = workTimeRepository.findById(id);
         if (optionalWorkTime.isPresent()) {
             WorkTime workTime = optionalWorkTime.get();
@@ -195,5 +194,29 @@ public class WorkTimeService {
         // 로그 추가
         logger.info("Weekly Work Durations from {} to {}: {}", startDate, endDate, weeklyWorkDurations);
         return weeklyWorkDurations;
+    }
+    public Map<String, Long> getMonthlyWorkHours(int year) {
+        Map<String, Long> monthlyWorkDurations = new LinkedHashMap<>();
+        for (Month month : Month.values()) {
+            monthlyWorkDurations.put(month.name(), 0L);
+        }
+
+        List<WorkTime> workTimes = workTimeRepository.findAll().stream()
+                .filter(workTime -> workTime.getStartTime().getYear() == year)
+                .filter(workTime -> Duration.between(workTime.getStartTime(), workTime.getEndTime() != null ? workTime.getEndTime() : LocalDateTime.now()).compareTo(MAX_WORK_DURATION) <= 0)
+                .collect(Collectors.toList());
+
+        for (WorkTime workTime : workTimes) {
+            LocalDateTime startTime = workTime.getStartTime();
+            LocalDateTime endTime = workTime.getEndTime() != null ? workTime.getEndTime() : LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+            long effectiveSeconds = workTime.getEffectiveWorkDurationSeconds();
+
+            Month month = startTime.getMonth();
+            monthlyWorkDurations.put(month.name(), monthlyWorkDurations.get(month.name()) + effectiveSeconds);
+        }
+
+        // 로그 추가
+        logger.info("Monthly Work Durations for {}: {}", year, monthlyWorkDurations);
+        return monthlyWorkDurations;
     }
 }

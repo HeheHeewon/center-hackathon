@@ -41,6 +41,7 @@ public class WorkTime {
             this.isPaused = false;
         }
     }
+
     @JsonProperty("effectiveWorkDurationInSeconds")
     public long getEffectiveWorkDurationSeconds() {
         if (startTime != null) {
@@ -50,18 +51,6 @@ public class WorkTime {
         }
         return 0;
     }
-
-    /* @JsonProperty("effectiveWorkDuration")
-    public Duration getEffectiveWorkDuration() {
-        if (startTime != null) {
-            LocalDateTime effectiveEndTime = endTime != null ? endTime : LocalDateTime.now();
-            Duration workDuration = Duration.between(startTime, effectiveEndTime);
-            return workDuration.minus(totalPauseDuration != null ? totalPauseDuration : Duration.ZERO);
-        }
-        return Duration.ZERO;
-    }
-
-     */
 
     @JsonProperty("totalWorkDurationInSeconds")
     public long getTotalWorkDuration() {
@@ -77,3 +66,16 @@ public class WorkTime {
         return (totalPauseDuration != null ? totalPauseDuration : Duration.ZERO).getSeconds();
     }
 }
+
+        /* @JsonProperty("effectiveWorkDuration")
+    public Duration getEffectiveWorkDuration() {
+        if (startTime != null) {
+            LocalDateTime effectiveEndTime = endTime != null ? endTime : LocalDateTime.now();
+            Duration workDuration = Duration.between(startTime, effectiveEndTime);
+            return workDuration.minus(totalPauseDuration != null ? totalPauseDuration : Duration.ZERO);
+        }
+        return Duration.ZERO;
+    }
+
+     */
+

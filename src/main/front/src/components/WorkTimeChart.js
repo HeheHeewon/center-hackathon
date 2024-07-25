@@ -12,25 +12,27 @@ function WorkTimeChart() {
     const [workHours, setWorkHours] = useState({});
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [workedDays, setWorkedDays] = useState([]);
-    const [totalWorkDuration, setTotalWorkDuration] = useState(0); // 총 근무 시간 상태 추가
+    const [totalWorkDuration, setTotalWorkDuration] = useState(0);
     const [weeklyWorkHours, setWeeklyWorkHours] = useState({});
-    const [currentWorkTimeId, setCurrentWorkTimeId] = useState(null); // 현재 작업 ID 상태 추가
+    const [monthlyWorkHours, setMonthlyWorkHours] = useState({});
+    const [currentWorkTimeId, setCurrentWorkTimeId] = useState(null);
 
     useEffect(() => {
         const today = new Date();
         fetchWorkedDays(today.getFullYear(), today.getMonth() + 1);
+        fetchMonthlyWorkHours(today.getFullYear());
     }, []);
 
     useEffect(() => {
         fetchDailyWorkHours(selectedDate);
-        fetchWeeklyWorkHours(selectedDate); // 주간 데이터도 가져오기
+        fetchWeeklyWorkHours(selectedDate);
     }, [selectedDate]);
 
     useEffect(() => {
         const intervalId = setInterval(() => {
             fetchDailyWorkHours(selectedDate);
-            fetchWeeklyWorkHours(selectedDate); // 주간 데이터도 주기적으로 가져오기
-        }, 60000); // 1분마다 서버로부터 작업 상태를 확인
+            fetchWeeklyWorkHours(selectedDate);
+        }, 60000);
 
         return () => clearInterval(intervalId);
     }, [selectedDate]);
@@ -39,7 +41,6 @@ function WorkTimeChart() {
         fetch(`/api/worktime/workedDays?year=${year}&month=${month}`)
             .then(response => response.json())
             .then(data => {
-                console.log('Worked days data:', data);
                 setWorkedDays(data.map(date => new Date(date)));
             })
             .catch(error => console.error('Error fetching worked days:', error));
@@ -47,19 +48,14 @@ function WorkTimeChart() {
 
     const fetchDailyWorkHours = (date) => {
         const dateString = date.toISOString().split('T')[0];
-        console.log(`Fetching data for: ${dateString}`);
         fetch(`/api/worktime/daily?date=${dateString}`)
             .then(response => response.json())
             .then(data => {
-                console.log("Received data for", dateString, data);
                 const minutesData = Object.keys(data).reduce((acc, hour) => {
                     acc[hour] = (data[hour] / 60).toFixed(2);
                     return acc;
                 }, {});
                 setWorkHours(minutesData);
-                console.log('Processed work hours:', minutesData);
-
-                // 총 근무 시간을 계산하여 상태 업데이트
                 const totalMinutes = Object.values(minutesData).reduce((acc, curr) => acc + parseFloat(curr), 0);
                 setTotalWorkDuration(totalMinutes);
             })
@@ -68,25 +64,35 @@ function WorkTimeChart() {
 
     const fetchWeeklyWorkHours = (date) => {
         const startDate = new Date(date);
-        startDate.setDate(startDate.getDate() - startDate.getDay() + 1); // 월요일로 시작
+        startDate.setDate(startDate.getDate() - startDate.getDay() + 1);
         const startDateString = startDate.toISOString().split('T')[0];
         fetch(`/api/worktime/weekly?startDate=${startDateString}`)
             .then(response => response.json())
             .then(data => {
-                console.log("Received weekly data for", startDateString, data);
                 const hoursData = Object.keys(data).reduce((acc, day) => {
-                    acc[day] = (data[day] / 60).toFixed(2); // 초를 분으로 변환
+                    acc[day] = (data[day] / 3600).toFixed(2);
                     return acc;
                 }, {});
                 setWeeklyWorkHours(hoursData);
-                console.log('Processed weekly work hours:', hoursData);
             })
             .catch(error => console.error('Error fetching weekly work hours:', error));
     };
 
+    const fetchMonthlyWorkHours = (year) => {
+        fetch(`/api/worktime/monthly?year=${year}`)
+            .then(response => response.json())
+            .then(data => {
+                const hoursData = Object.keys(data).reduce((acc, month) => {
+                    acc[month] = (data[month] / 3600).toFixed(2);
+                    return acc;
+                }, {});
+                setMonthlyWorkHours(hoursData);
+            })
+            .catch(error => console.error('Error fetching monthly work hours:', error));
+    };
+
     const handleDateChange = (date) => {
-        const kstDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000) + 9 * 60 * 60 * 1000); // KST 적용
-        console.log(`Date selected: ${kstDate}`);
+        const kstDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000) + 9 * 60 * 60 * 1000);
         setSelectedDate(kstDate);
     };
 
@@ -94,9 +100,8 @@ function WorkTimeChart() {
         fetch(`/api/worktime/end/${id}`, { method: 'POST' })
             .then(response => response.json())
             .then(data => {
-                console.log('Ended work time:', data);
                 setCurrentWorkTimeId(null);
-                fetchDailyWorkHours(selectedDate); // 종료 후 데이터 갱신
+                fetchDailyWorkHours(selectedDate);
             })
             .catch(error => console.error('Error ending work:', error));
     };
@@ -125,10 +130,23 @@ function WorkTimeChart() {
         labels: ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'],
         datasets: [
             {
-                label: 'Work Duration (in minutes)',
+                label: 'Work Duration (in hours)',
                 data: ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'].map(day => parseFloat(weeklyWorkHours[day] || 0)),
                 backgroundColor: 'rgba(153, 102, 255, 0.2)',
                 borderColor: 'rgba(153, 102, 255, 1)',
+                borderWidth: 1,
+            },
+        ],
+    };
+
+    const monthlyData = {
+        labels: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
+        datasets: [
+            {
+                label: 'Work Duration (in hours)',
+                data: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'].map(month => parseFloat(monthlyWorkHours[month] || 0)),
+                backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                borderColor: 'rgba(255, 159, 64, 1)',
                 borderWidth: 1,
             },
         ],
@@ -166,7 +184,7 @@ function WorkTimeChart() {
                     label: function (context) {
                         const value = context.raw;
                         const minutes = Math.floor(value);
-                        const seconds = Math.round((value - minutes) * 60);
+                        const seconds = Math.floor((value - minutes) * 60);
                         return seconds > 0 ? `${minutes}m ${seconds}s` : `${minutes}m`;
                     },
                 },
@@ -178,15 +196,15 @@ function WorkTimeChart() {
         scales: {
             y: {
                 beginAtZero: true,
-                max: 600, // 600 minutes = 10 hours
+                max: 10,
                 title: {
                     display: true,
-                    text: 'Work Duration (minutes)',
+                    text: 'Work Duration (hours)',
                 },
                 ticks: {
-                    stepSize: 60, // 1 hour = 60 minutes
+                    stepSize: 2,
                     callback: function (value) {
-                        return `${value}m`;
+                        return `${value}h`;
                     },
                 },
             },
@@ -205,17 +223,54 @@ function WorkTimeChart() {
                 callbacks: {
                     label: function (context) {
                         const value = context.raw;
-                        const minutes = Math.floor(value);
-                        const hours = Math.floor(minutes / 60);
-                        const remainingMinutes = minutes % 60;
-                        return remainingMinutes > 0 ? `${hours}h ${remainingMinutes}m` : `${hours}h`;
+                        const hours = Math.floor(value);
+                        const minutes = Math.floor((value - hours) * 60);
+                        return minutes > 0 ? `${hours}h ${minutes}m` : `${hours}h`;
                     },
                 },
             },
         },
     };
 
-    console.log('Chart data:', dailyData, weeklyData);
+    const monthlyOptions = {
+        scales: {
+            y: {
+                beginAtZero: true,
+                max: 180,
+                title: {
+                    display: true,
+                    text: 'Work Duration (hours)',
+                },
+                ticks: {
+                    stepSize: 30,
+                    callback: function (value) {
+                        return `${value}h`;
+                    },
+                },
+            },
+            x: {
+                title: {
+                    display: true,
+                    text: 'Month',
+                },
+                ticks: {
+                    stepSize: 1,
+                },
+            },
+        },
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    label: function (context) {
+                        const value = context.raw;
+                        const hours = Math.floor(value);
+                        const minutes = Math.floor((value - hours) * 60);
+                        return minutes > 0 ? `${hours}h ${minutes}m` : `${hours}h`;
+                    },
+                },
+            },
+        },
+    };
 
     return (
         <div>
@@ -231,6 +286,8 @@ function WorkTimeChart() {
             )}
             <h2>Weekly Work Duration Chart</h2>
             <Bar data={weeklyData} options={weeklyOptions} />
+            <h2>Monthly Work Duration Chart</h2>
+            <Bar data={monthlyData} options={monthlyOptions} />
         </div>
     );
 }

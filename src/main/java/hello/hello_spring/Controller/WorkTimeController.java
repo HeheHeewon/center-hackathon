@@ -58,11 +58,17 @@ public class WorkTimeController {
         LocalDate start = LocalDate.parse(startDate);
         return workTimeService.getWeeklyWorkHours(start);
     }
+    @GetMapping("/monthly")
+    public Map<String, Long> getMonthlyWorkHours(@RequestParam("year") int year) {
+        return workTimeService.getMonthlyWorkHours(year);
+    }
 
     @GetMapping("/workedDays")
     public List<LocalDate> getWorkedDaysInMonth(@RequestParam int year, @RequestParam int month) {
         return workTimeService.getWorkedDaysInMonth(year, month);
     }
+
+
 }
 
 
