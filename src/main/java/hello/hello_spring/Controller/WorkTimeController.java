@@ -59,7 +59,7 @@ public class WorkTimeController {
         return workTimeService.getWeeklyWorkHours(start);
     }
     @GetMapping("/monthly")
-    public Map<String, Long> getMonthlyWorkHours(@RequestParam("year") int year) {
+    public Map<String, Long> getMonthlyWorkHours(@RequestParam int year) {
         return workTimeService.getMonthlyWorkHours(year);
     }
 

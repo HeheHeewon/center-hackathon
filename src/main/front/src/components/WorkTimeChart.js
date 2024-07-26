@@ -147,13 +147,19 @@ function WorkTimeChart() {
         datasets: [
             {
                 label: 'Work Duration (in hours)',
-                data: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'].map(month => parseFloat(monthlyWorkHours[month] || 0)),
+                data: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'].map(month => {
+                    const value = parseFloat(monthlyWorkHours[month] || 0);
+                    console.log(`Month: ${month}, Value: ${value}`); // 각 월별 데이터 확인
+                    return value;
+                }),
                 backgroundColor: 'rgba(255, 159, 64, 0.2)',
                 borderColor: 'rgba(255, 159, 64, 1)',
                 borderWidth: 1,
             },
         ],
     };
+
+    console.log('Monthly Data for Chart:', monthlyData); // monthlyData 객체를 콘솔에 출력하여 확인
 
     const dailyOptions = {
         scales: {
@@ -239,13 +245,11 @@ function WorkTimeChart() {
         scales: {
             y: {
                 beginAtZero: true,
-                max: 180,
                 title: {
                     display: true,
                     text: 'Work Duration (hours)',
                 },
                 ticks: {
-                    stepSize: 30,
                     callback: function (value) {
                         return `${value}h`;
                     },
@@ -255,9 +259,6 @@ function WorkTimeChart() {
                 title: {
                     display: true,
                     text: 'Month',
-                },
-                ticks: {
-                    stepSize: 1,
                 },
             },
         },

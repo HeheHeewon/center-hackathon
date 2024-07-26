@@ -195,6 +195,41 @@ public class WorkTimeService {
         logger.info("Weekly Work Durations from {} to {}: {}", startDate, endDate, weeklyWorkDurations);
         return weeklyWorkDurations;
     }
+
+    public Map<String, Long> getMonthlyWorkHours(int year) {
+        Map<String, Long> monthlyWorkDurations = new LinkedHashMap<>();
+        for (Month month : Month.values()) {
+            monthlyWorkDurations.put(month.name(), 0L);
+        }
+
+        List<WorkTime> workTimes = workTimeRepository.findAll().stream()
+                .filter(workTime -> workTime.getStartTime().getYear() == year)
+                .filter(workTime -> {
+                    LocalDateTime endTime = workTime.getEndTime() != null ? workTime.getEndTime() : LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+                    return Duration.between(workTime.getStartTime(), endTime).compareTo(MAX_WORK_DURATION) <= 0;
+                })
+                .collect(Collectors.toList());
+
+        for (WorkTime workTime : workTimes) {
+            LocalDateTime startTime = workTime.getStartTime();
+            LocalDateTime endTime = workTime.getEndTime() != null ? workTime.getEndTime() : LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+            long effectiveSeconds = workTime.getEffectiveWorkDurationSeconds();
+
+            Month month = startTime.getMonth();
+            monthlyWorkDurations.put(month.name(), monthlyWorkDurations.get(month.name()) + effectiveSeconds);
+        }
+
+        // 로그 추가
+        logger.info("Monthly Work Durations for {}: {}", year, monthlyWorkDurations);
+        return monthlyWorkDurations;
+    }
+}
+
+
+
+
+
+    /*
     public Map<String, Long> getMonthlyWorkHours(int year) {
         Map<String, Long> monthlyWorkDurations = new LinkedHashMap<>();
         for (Month month : Month.values()) {
@@ -220,3 +255,4 @@ public class WorkTimeService {
         return monthlyWorkDurations;
     }
 }
+*/
