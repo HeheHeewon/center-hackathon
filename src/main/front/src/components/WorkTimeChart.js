@@ -83,15 +83,31 @@ function WorkTimeChart() {
         fetch(`/api/worktime/monthly?year=${year}`)
             .then(response => response.json())
             .then(data => {
-                console.log("Monthly data from server:", data); // 서버에서 받은 데이터를 콘솔에 출력하여 확인
+                console.log("서버에서 받은 월별 데이터:", data); // 서버에서 받은 데이터를 콘솔에 출력하여 확인
                 const hoursData = Object.keys(data).reduce((acc, month) => {
                     acc[month] = (data[month] / 3600).toFixed(2);
                     return acc;
                 }, {});
                 setMonthlyWorkHours(hoursData);
-                console.log("Processed monthly work hours:", hoursData); // 상태 설정 후 데이터를 콘솔에 출력하여 확인
+                console.log("처리된 월별 근무 시간 데이터:", hoursData); // 상태 설정 후 데이터를 콘솔에 출력하여 확인
+
+                // 데이터와 라벨 길이 확인
+                const labels = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+                const dataArray = labels.map(month => parseFloat(hoursData[month] || 0));
+
+                console.log('월별 라벨:', labels);
+                console.log('월별 데이터:', dataArray);
+                console.log('라벨 길이:', labels.length);
+                console.log('데이터 길이:', dataArray.length);
+
+                // NaN 값 검사
+                dataArray.forEach(value => {
+                    if (isNaN(value)) {
+                        console.error('데이터에 NaN 값이 감지되었습니다:', value);
+                    }
+                });
             })
-            .catch(error => console.error('Error fetching monthly work hours:', error));
+            .catch(error => console.error('월별 근무 시간 데이터를 가져오는 중 오류 발생:', error));
     };
 
     const handleDateChange = (date) => {
@@ -149,7 +165,9 @@ function WorkTimeChart() {
                 label: 'Work Duration (in hours)',
                 data: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'].map(month => {
                     const value = parseFloat(monthlyWorkHours[month] || 0);
-                    console.log(`Month: ${month}, Value: ${value}`); // 각 월별 데이터 확인
+                    if (isNaN(value)) {
+                        console.error(`NaN 값이 ${month}월에 감지되었습니다`);
+                    }
                     return value;
                 }),
                 backgroundColor: 'rgba(255, 159, 64, 0.2)',
@@ -159,7 +177,7 @@ function WorkTimeChart() {
         ],
     };
 
-    console.log('Monthly Data for Chart:', monthlyData); // monthlyData 객체를 콘솔에 출력하여 확인
+    console.log('월별 데이터 차트:', monthlyData); // monthlyData 객체를 콘솔에 출력하여 확인
 
     const dailyOptions = {
         scales: {
@@ -276,7 +294,7 @@ function WorkTimeChart() {
         },
     };
 
-    console.log('Chart data:', dailyData, weeklyData, monthlyData);
+    console.log('차트 데이터:', dailyData, weeklyData, monthlyData);
 
     return (
         <div>
