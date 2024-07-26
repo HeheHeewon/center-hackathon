@@ -55,40 +55,6 @@ public class WorkTimeService {
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "WorkTime not found");
     }
 
-
-    /*
-    public WorkTime endWork(Long id) {
-        Optional<WorkTime> optionalWorkTime = workTimeRepository.findById(id);
-        if (optionalWorkTime.isPresent()) {
-            WorkTime workTime = optionalWorkTime.get();
-            if (workTime.getEndTime() == null) {
-                // Check if the time since start is more than AUTO_END_DURATION
-                Duration duration = Duration.between(workTime.getStartTime(), LocalDateTime.now(ZoneId.of("Asia/Seoul")));
-                if (duration.compareTo(AUTO_END_DURATION) > 0) {
-                    workTime.setEndTime(LocalDateTime.now(ZoneId.of("Asia/Seoul")));
-                    logger.info("Auto-ending work time for ID {}: {}", id, workTime.getEndTime());
-                }
-            }
-            return workTimeRepository.save(workTime);
-        }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "WorkTime not found");
-    }
-
-     */
-
-    /*
-    public WorkTime endWork(Long id) {
-        Optional<WorkTime> optionalWorkTime = workTimeRepository.findById(id);
-        if (optionalWorkTime.isPresent()) {
-            WorkTime workTime = optionalWorkTime.get();
-            workTime.setEndTime(LocalDateTime.now(ZoneId.of("Asia/Seoul")));
-            return workTimeRepository.save(workTime);
-        }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "WorkTime not found");
-    }
-
-     */
-
     public WorkTime pauseWork(Long id) {
         Optional<WorkTime> optionalWorkTime = workTimeRepository.findById(id);
         if (optionalWorkTime.isPresent()) {
@@ -164,6 +130,8 @@ public class WorkTimeService {
                 .collect(Collectors.toList());
     }
 
+    // 주간 데이터
+
     public Map<String, Long> getWeeklyWorkHours(LocalDate startDate) {
         Map<String, Long> weeklyWorkDurations = new LinkedHashMap<>();
         for (DayOfWeek day : DayOfWeek.values()) {
@@ -196,6 +164,8 @@ public class WorkTimeService {
         return weeklyWorkDurations;
     }
 
+    // 월간 데이터
+
     public Map<String, Long> getMonthlyWorkHours(int year) {
         Map<String, Long> monthlyWorkDurations = new LinkedHashMap<>();
         for (Month month : Month.values()) {
@@ -223,32 +193,63 @@ public class WorkTimeService {
         logger.info("Monthly Work Durations for {}: {}", year, monthlyWorkDurations);
         return monthlyWorkDurations;
     }
+
+    // 시간 기능 위해 추가 코드
+    public long calculateEffectiveWorkDuration(LocalDateTime startTime, LocalDateTime endTime, Duration totalPauseDuration) {
+        if (startTime != null) {
+            LocalDateTime effectiveEndTime = endTime != null ? endTime : LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+            Duration workDuration = Duration.between(startTime, effectiveEndTime);
+            Duration pauseDuration = totalPauseDuration != null ? totalPauseDuration : Duration.ZERO;
+
+            Duration effectiveWorkDuration = workDuration.minus(pauseDuration);
+            return effectiveWorkDuration.getSeconds();
+        }
+        return 0;
+    }
+
+    public long calculateTotalWorkDuration(LocalDateTime startTime, LocalDateTime endTime) {
+        if (startTime != null) {
+            LocalDateTime effectiveEndTime = endTime != null ? endTime : LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+            Duration workDuration = Duration.between(startTime, effectiveEndTime);
+            return workDuration.getSeconds();
+        }
+        return 0;
+    }
+
+    public long calculateTotalPauseDuration(Duration totalPauseDuration) {
+        return (totalPauseDuration != null ? totalPauseDuration : Duration.ZERO).getSeconds();
+    }
 }
 
     /*
-    public Map<String, Long> getMonthlyWorkHours(int year) {
-        Map<String, Long> monthlyWorkDurations = new LinkedHashMap<>();
-        for (Month month : Month.values()) {
-            monthlyWorkDurations.put(month.name(), 0L);
+    public WorkTime endWork(Long id) {
+        Optional<WorkTime> optionalWorkTime = workTimeRepository.findById(id);
+        if (optionalWorkTime.isPresent()) {
+            WorkTime workTime = optionalWorkTime.get();
+            if (workTime.getEndTime() == null) {
+                // Check if the time since start is more than AUTO_END_DURATION
+                Duration duration = Duration.between(workTime.getStartTime(), LocalDateTime.now(ZoneId.of("Asia/Seoul")));
+                if (duration.compareTo(AUTO_END_DURATION) > 0) {
+                    workTime.setEndTime(LocalDateTime.now(ZoneId.of("Asia/Seoul")));
+                    logger.info("Auto-ending work time for ID {}: {}", id, workTime.getEndTime());
+                }
+            }
+            return workTimeRepository.save(workTime);
         }
-
-        List<WorkTime> workTimes = workTimeRepository.findAll().stream()
-                .filter(workTime -> workTime.getStartTime().getYear() == year)
-                .filter(workTime -> Duration.between(workTime.getStartTime(), workTime.getEndTime() != null ? workTime.getEndTime() : LocalDateTime.now()).compareTo(MAX_WORK_DURATION) <= 0)
-                .collect(Collectors.toList());
-
-        for (WorkTime workTime : workTimes) {
-            LocalDateTime startTime = workTime.getStartTime();
-            LocalDateTime endTime = workTime.getEndTime() != null ? workTime.getEndTime() : LocalDateTime.now(ZoneId.of("Asia/Seoul"));
-            long effectiveSeconds = workTime.getEffectiveWorkDurationSeconds();
-
-            Month month = startTime.getMonth();
-            monthlyWorkDurations.put(month.name(), monthlyWorkDurations.get(month.name()) + effectiveSeconds);
-        }
-
-        // 로그 추가
-        logger.info("Monthly Work Durations for {}: {}", year, monthlyWorkDurations);
-        return monthlyWorkDurations;
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "WorkTime not found");
     }
-}
-*/
+
+     */
+
+    /*
+    public WorkTime endWork(Long id) {
+        Optional<WorkTime> optionalWorkTime = workTimeRepository.findById(id);
+        if (optionalWorkTime.isPresent()) {
+            WorkTime workTime = optionalWorkTime.get();
+            workTime.setEndTime(LocalDateTime.now(ZoneId.of("Asia/Seoul")));
+            return workTimeRepository.save(workTime);
+        }
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "WorkTime not found");
+    }
+
+     */

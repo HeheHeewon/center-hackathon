@@ -10,6 +10,7 @@ import lombok.Setter;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Entity
 @Getter
@@ -45,7 +46,7 @@ public class WorkTime {
     @JsonProperty("effectiveWorkDurationInSeconds")
     public long getEffectiveWorkDurationSeconds() {
         if (startTime != null) {
-            LocalDateTime effectiveEndTime = endTime != null ? endTime : LocalDateTime.now();
+            LocalDateTime effectiveEndTime = endTime != null ? endTime : LocalDateTime.now(ZoneId.of("Asia/Seoul"));
             Duration workDuration = Duration.between(startTime, effectiveEndTime);
             return workDuration.minus(totalPauseDuration != null ? totalPauseDuration : Duration.ZERO).getSeconds();
         }
@@ -55,7 +56,7 @@ public class WorkTime {
     @JsonProperty("totalWorkDurationInSeconds")
     public long getTotalWorkDuration() {
         if (startTime != null) {
-            LocalDateTime effectiveEndTime = endTime != null ? endTime : LocalDateTime.now();
+            LocalDateTime effectiveEndTime = endTime != null ? endTime : LocalDateTime.now(ZoneId.of("Asia/Seoul"));
             return Duration.between(startTime, effectiveEndTime).getSeconds();
         }
         return 0;
@@ -67,15 +68,4 @@ public class WorkTime {
     }
 }
 
-        /* @JsonProperty("effectiveWorkDuration")
-    public Duration getEffectiveWorkDuration() {
-        if (startTime != null) {
-            LocalDateTime effectiveEndTime = endTime != null ? endTime : LocalDateTime.now();
-            Duration workDuration = Duration.between(startTime, effectiveEndTime);
-            return workDuration.minus(totalPauseDuration != null ? totalPauseDuration : Duration.ZERO);
-        }
-        return Duration.ZERO;
-    }
-
-     */
 
