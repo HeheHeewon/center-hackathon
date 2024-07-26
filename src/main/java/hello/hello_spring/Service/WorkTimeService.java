@@ -225,10 +225,6 @@ public class WorkTimeService {
     }
 }
 
-
-
-
-
     /*
     public Map<String, Long> getMonthlyWorkHours(int year) {
         Map<String, Long> monthlyWorkDurations = new LinkedHashMap<>();

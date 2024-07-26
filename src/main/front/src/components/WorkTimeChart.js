@@ -37,6 +37,14 @@ function WorkTimeChart() {
         return () => clearInterval(intervalId);
     }, [selectedDate]);
 
+    // `selectedDate.getFullYear()`의 값을 별도의 변수로 추출
+    const selectedYear = selectedDate.getFullYear();
+
+    // 이 부분에서 selectedYear를 의존성 배열에 포함시킵니다.
+    useEffect(() => {
+        fetchMonthlyWorkHours(selectedYear);
+    }, [selectedYear]);
+
     const fetchWorkedDays = (year, month) => {
         fetch(`/api/worktime/workedDays?year=${year}&month=${month}`)
             .then(response => response.json())
@@ -83,17 +91,45 @@ function WorkTimeChart() {
         fetch(`/api/worktime/monthly?year=${year}`)
             .then(response => response.json())
             .then(data => {
-                console.log("서버에서 받은 월별 데이터:", data); // 서버에서 받은 데이터를 콘솔에 출력하여 확인
-                const hoursData = Object.keys(data).reduce((acc, month) => {
-                    acc[month] = (data[month] / 3600).toFixed(2);
+                console.log("서버에서 받은 월별 데이터:", data);
+
+                // 서버 데이터의 월 키를 클라이언트 라벨에 맞게 변환
+                const monthMap = {
+                    "JANUARY": "JAN",
+                    "FEBRUARY": "FEB",
+                    "MARCH": "MAR",
+                    "APRIL": "APR",
+                    "MAY": "MAY",
+                    "JUNE": "JUN",
+                    "JULY": "JUL",
+                    "AUGUST": "AUG",
+                    "SEPTEMBER": "SEP",
+                    "OCTOBER": "OCT",
+                    "NOVEMBER": "NOV",
+                    "DECEMBER": "DEC"
+                };
+
+
+                const hoursData = Object.keys(data).reduce((acc, key) => {
+                    const monthLabel = monthMap[key];
+                    if (monthLabel) {
+                        acc[monthLabel] = (data[key] / 3600).toFixed(2); // 초를 시간 단위로 변환하여 설정
+                    }
                     return acc;
                 }, {});
+
+                console.log("처리된 월별 근무 시간 데이터:", hoursData);
+
+                // 상태 설정
                 setMonthlyWorkHours(hoursData);
-                console.log("처리된 월별 근무 시간 데이터:", hoursData); // 상태 설정 후 데이터를 콘솔에 출력하여 확인
 
                 // 데이터와 라벨 길이 확인
                 const labels = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-                const dataArray = labels.map(month => parseFloat(hoursData[month] || 0));
+                const dataArray = labels.map(month => {
+                    const value = parseFloat(hoursData[month] || 0);
+                    console.log(`${month} 데이터 값: ${value}`); // 각 월별 데이터 값을 출력하여 확인
+                    return value;
+                });
 
                 console.log('월별 라벨:', labels);
                 console.log('월별 데이터:', dataArray);
@@ -165,6 +201,7 @@ function WorkTimeChart() {
                 label: 'Work Duration (in hours)',
                 data: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'].map(month => {
                     const value = parseFloat(monthlyWorkHours[month] || 0);
+                    console.log(`${month} 데이터 값: ${value}`); // 각 월별 데이터 값을 출력하여 확인
                     if (isNaN(value)) {
                         console.error(`NaN 값이 ${month}월에 감지되었습니다`);
                     }
@@ -263,11 +300,13 @@ function WorkTimeChart() {
         scales: {
             y: {
                 beginAtZero: true,
+                max: 180, // y축 최대값을 180으로 설정
                 title: {
                     display: true,
                     text: 'Work Duration (hours)',
                 },
                 ticks: {
+                    stepSize: 30,  // 30시간 간격으로 눈금 표시
                     callback: function (value) {
                         return `${value}h`;
                     },
@@ -293,8 +332,6 @@ function WorkTimeChart() {
             },
         },
     };
-
-    console.log('차트 데이터:', dailyData, weeklyData, monthlyData);
 
     return (
         <div>
