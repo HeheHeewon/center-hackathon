@@ -69,6 +69,7 @@ public class WorkTimeController {
     public List<LocalDate> getWorkedDaysInMonth(@RequestParam int year, @RequestParam int month) {
         return workTimeService.getWorkedDaysInMonth(year, month);
     }
+
 }
 
 

@@ -11,6 +11,7 @@ import lombok.Setter;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.temporal.Temporal;
 
 @Entity
 @Getter
@@ -26,6 +27,8 @@ public class WorkTime {
     private boolean isPaused = false; // 기본값 설정; // 일시 정지 상태를 나타내는 플래그
     private Duration totalPauseDuration = Duration.ZERO;
     private LocalDateTime lastPauseTime;
+
+
 
     public void pause() {
         if (!isPaused) {
@@ -67,5 +70,4 @@ public class WorkTime {
         return (totalPauseDuration != null ? totalPauseDuration : Duration.ZERO).getSeconds();
     }
 }
-
 

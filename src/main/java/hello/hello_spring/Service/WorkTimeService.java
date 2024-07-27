@@ -20,8 +20,8 @@ public class WorkTimeService {
 
     private static final Logger logger = LoggerFactory.getLogger(WorkTimeService.class);
 
-    // 종료 버튼을 누르지 않고 10시간이 지나면 자동으로 작업이 종료되도록 설정
-    private static final Duration MAX_WORK_DURATION = Duration.ofHours(10); // 최대 작업 시간 설정
+    // 종료 버튼을 누르지 않고 7시간이 지나면 자동으로 작업이 종료되도록 설정
+    private static final Duration MAX_WORK_DURATION = Duration.ofHours(7); // 최대 작업 시간 설정
 
     @Autowired
     private WorkTimeRepository workTimeRepository;
@@ -120,10 +120,19 @@ public class WorkTimeService {
                 if (duration > effectiveSeconds) {
                     duration = effectiveSeconds;
                 }
-                hourlyWorkDurations.put(hour, hourlyWorkDurations.get(hour) + duration);
+
+                long currentDuration = hourlyWorkDurations.get(hour);
+                long newDuration = currentDuration + duration;
+                hourlyWorkDurations.put(hour, Math.min(newDuration, 3600L)); // 시간당 최대 3600초 (60분)으로 제한
                 startTime = nextHour;
                 effectiveSeconds -= duration;
-            }
+                }
+
+                /* hourlyWorkDurations.put(hour, hourlyWorkDurations.get(hour) + duration);
+                startTime = nextHour;
+                effectiveSeconds -= duration;
+                 */
+
         }
         logger.info("Hourly Work Durations for {}: {}", date, hourlyWorkDurations);
         return hourlyWorkDurations;
@@ -148,12 +157,15 @@ public class WorkTimeService {
         List<WorkTime> workTimes = workTimeRepository.findAll().stream()
                 .filter(workTime -> !workTime.getStartTime().toLocalDate().isBefore(startDate) &&
                         !workTime.getStartTime().toLocalDate().isAfter(endDate))
+
+
                 .filter(workTime -> {
                     LocalDateTime endTime = workTime.getEndTime() != null ? workTime.getEndTime() : LocalDateTime.now();
                     Duration duration = Duration.between(workTime.getStartTime(), endTime);
                     return duration.compareTo(MAX_WORK_DURATION) <= 0;
                 })
                 .collect(Collectors.toList());
+
 
         for (WorkTime workTime : workTimes) {
             LocalDateTime startTime = workTime.getStartTime();
