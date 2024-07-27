@@ -443,46 +443,4 @@ public class WorkTimeService {
         logger.info("Monthly Work Durations for {}: {}", year, monthlyWorkDurations);
         return monthlyWorkDurations;
     }
-}
-
-
-    // 타이머 기능 위해 추가로 작성한 코드
-    /*
-    public long calculateEffectiveWorkDuration(LocalDateTime startTime, LocalDateTime endTime, Duration totalPauseDuration) {
-        if (startTime != null) {
-            LocalDateTime effectiveEndTime = endTime != null ? endTime : LocalDateTime.now(ZoneId.of("Asia/Seoul"));
-            Duration workDuration = Duration.between(startTime, effectiveEndTime);
-            Duration pauseDuration = totalPauseDuration != null ? totalPauseDuration : Duration.ZERO;
-
-            Duration effectiveWorkDuration = workDuration.minus(pauseDuration);
-            return effectiveWorkDuration.getSeconds();
-        }
-        return 0;
-    }
-
-    public long calculateTotalWorkDuration(LocalDateTime startTime, LocalDateTime endTime) {
-        if (startTime != null) {
-            LocalDateTime effectiveEndTime = endTime != null ? endTime : LocalDateTime.now(ZoneId.of("Asia/Seoul"));
-            Duration workDuration = Duration.between(startTime, effectiveEndTime);
-            return workDuration.getSeconds();
-        }
-        return 0;
-    }
-
-    public long calculateTotalPauseDuration(Duration totalPauseDuration) {
-        return (totalPauseDuration != null ? totalPauseDuration : Duration.ZERO).getSeconds();
-    }
-
-    public long getCurrentWorkDuration(Long id) {
-        Optional<WorkTime> optionalWorkTime = workTimeRepository.findById(id);
-        if (optionalWorkTime.isPresent()) {
-            WorkTime workTime = optionalWorkTime.get();
-            LocalDateTime endTime = workTime.getEndTime() != null ? workTime.getEndTime() : LocalDateTime.now(ZoneId.of("Asia/Seoul"));
-            Duration duration = Duration.between(workTime.getStartTime(), endTime);
-            return duration.getSeconds() - workTime.getTotalPauseDuration().getSeconds();
-        }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "WorkTime not found");
-    }
-}
-
-     */
+ */
