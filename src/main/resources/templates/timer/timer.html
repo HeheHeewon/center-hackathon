@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Timer</title>
+    <script>
+        var timerId, time;
+        function formatTime(seconds) {
+            var h = Math.floor(seconds / 3600);
+            var m = Math.floor((seconds % 3600) / 60);
+            var s = seconds % 60;
+            return [h > 9 ? h : "0" + h, m > 9 ? m : "0" + m, s > 9 ? s : "0" + s].join(':');
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var initialTimeElement = document.getElementById('time');
+            time = parseInt(initialTimeElement.textContent, 10);
+            initialTimeElement.textContent = formatTime(time);
+
+            if (!("Notification" in window)) {
+                alert("This browser does not support desktop notifications.");
+            } else if (Notification.permission === "default") {
+                Notification.requestPermission().then(permission => {
+                    if (permission === "granted") {
+                        console.log("Notification permission granted.");
+                        // Test notification
+                        new Notification("Notification enabled", {body: "You will receive alerts!"});
+                    } else {
+                        console.log("Notification permission denied.");
+                    }
+                });
+            }
+        });
+
+        function showNotification() {
+            if (Notification.permission === "granted") {
+                var notification = new Notification("Timer Completed", {
+                    body: "Time to do some eye exercises and stretching!",
+                    icon: "https://example.com/icon.png"  // Replace with your icon URL
+                });
+                console.log("Notification shown");
+            } else {
+                console.log("Notification permission not granted");
+            }
+        }
+
+        function startTimer() {
+            if (!timerId) {
+                timerId = setInterval(function() {
+                    if (time > 0) {
+                        time--;
+                        document.getElementById('time').textContent = formatTime(time);
+                    } else {
+                        document.getElementById('message').textContent = "Time's up!";
+                        clearInterval(timerId);
+                        timerId = null;
+                        showNotification();
+                    }
+                }, 1000);
+            }
+        }
+
+        function stopTimer() {
+            clearInterval(timerId);
+            timerId = null;
+        }
+
+    </script>
+</head>
+<body>
+<h1>Timer</h1>
+<form action="/timer" method="get">
+    <select name="time">
+        <option value="900">15 minutes</option>
+        <option value="1800">30 minutes</option>
+        <option value="2700">45 minutes</option>
+        <option value="3600">1 hour</option>
+    </select>
+    <button type="submit">Set Timer</button>
+</form>
+<div id="time" th:text="${initialTime}"></div>
+<div id="message"></div>
+<button onclick="startTimer()">Start</button>
+<button onclick="stopTimer()">Stop</button>
+</body>
+</html>
