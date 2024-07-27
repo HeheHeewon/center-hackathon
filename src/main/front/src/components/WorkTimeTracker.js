@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 
 function WorkTimeTracker() {
     const [workTimes, setWorkTimes] = useState([]);
@@ -7,53 +7,23 @@ function WorkTimeTracker() {
     const [intervalId, setIntervalId] = useState(null);
     const [isPaused, setIsPaused] = useState(false);
 
-    // calculateTotalWorkDuration를 useCallback으로 정의
-    const calculateTotalWorkDuration = useCallback((startTime, endTime) => {
-        if (startTime) {
-            const effectiveEndTime = endTime || new Date();
-            const duration = (effectiveEndTime - startTime) / 1000; // seconds
-            return duration;
-        }
-        return 0;
+    useEffect(() => {
+        fetchWorkTimes();
     }, []);
 
-    // calculateEffectiveWorkDuration를 useCallback으로 정의
-    const calculateEffectiveWorkDuration = useCallback((startTime, endTime, totalPauseDuration) => {
-        const totalWorkDuration = calculateTotalWorkDuration(startTime, endTime);
-        return totalWorkDuration - (totalPauseDuration || 0);
-    }, [calculateTotalWorkDuration]); // calculateTotalWorkDuration 의존성 추가
-
-    // fetchWorkTimes를 useCallback으로 정의
-    const fetchWorkTimes = useCallback(() => {
+    const fetchWorkTimes = () => {
         fetch('/api/worktime')
             .then(response => response.json())
             .then(data => {
-                const convertedData = data.map(workTime => {
-                    const startTime = new Date(workTime.startTime);
-                    const endTime = workTime.endTime ? new Date(workTime.endTime) : null;
-                    const totalWorkDuration = calculateTotalWorkDuration(startTime, endTime);
-                    const effectiveWorkDuration = calculateEffectiveWorkDuration(startTime, endTime, workTime.totalPauseDurationInSeconds);
-
-                    return {
-                        ...workTime,
-                        startTime,
-                        endTime,
-                        totalWorkDurationInSeconds: totalWorkDuration,
-                        effectiveWorkDurationInSeconds: effectiveWorkDuration,
-                        totalPauseDurationInSeconds: workTime.totalPauseDurationInSeconds
-                    };
-                });
+                const convertedData = data.map(workTime => ({
+                    ...workTime,
+                    startTime: new Date(new Date(workTime.startTime).toLocaleString("en-US", { timeZone: "Asia/Seoul" })),
+                    endTime: workTime.endTime ? new Date(new Date(workTime.endTime).toLocaleString("en-US", { timeZone: "Asia/Seoul" })) : null
+                }));
                 setWorkTimes(convertedData);
             })
             .catch(error => console.error('Error fetching work times:', error));
-    }, [calculateTotalWorkDuration, calculateEffectiveWorkDuration]); // 의존성 배열에 calculateTotalWorkDuration, calculateEffectiveWorkDuration 추가
-
-    useEffect(() => {
-        fetchWorkTimes();
-        return () => {
-            if (intervalId) clearInterval(intervalId);
-        };
-    }, [fetchWorkTimes, intervalId]); // 의존성 배열에 fetchWorkTimes 추가
+    };
 
     const startWork = () => {
         fetch('/api/worktime/start', { method: 'POST' })
@@ -115,7 +85,7 @@ function WorkTimeTracker() {
     const formatTime = (seconds) => {
         const h = Math.floor(seconds / 3600);
         const m = Math.floor((seconds % 3600) / 60);
-        const s = (seconds % 60).toFixed(2);
+        const s = seconds % 60;
         return `${h}h ${m}m ${s}s`;
     };
 
@@ -135,8 +105,8 @@ function WorkTimeTracker() {
             <ul>
                 {workTimes.map(workTime => (
                     <li key={workTime.id}>
-                        Start: {workTime.startTime.toLocaleString("en-US", { timeZone: "Asia/Seoul", hour12: true })}<br />
-                        End: {workTime.endTime ? workTime.endTime.toLocaleString("en-US", { timeZone: "Asia/Seoul", hour12: true }) : 'Ongoing'}<br />
+                        Start: {new Date(workTime.startTime).toLocaleString("en-US", { timeZone: "Asia/Seoul" })}<br />
+                        End: {workTime.endTime ? new Date(workTime.endTime).toLocaleString("en-US", { timeZone: "Asia/Seoul" }) : 'Ongoing'}<br />
                         Total Work Duration: {formatTime(workTime.totalWorkDurationInSeconds)}<br />
                         Effective Work Duration: {formatTime(workTime.effectiveWorkDurationInSeconds)}<br />
                         Total Pause Duration: {formatTime(workTime.totalPauseDurationInSeconds)}

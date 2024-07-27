@@ -306,7 +306,6 @@ function WorkTimeChart() {
                     text: 'Work Duration (hours)',
                 },
                 ticks: {
-                    stepSize: 30,  // 30시간 간격으로 눈금 표시
                     callback: function (value) {
                         return `${value}h`;
                     },
