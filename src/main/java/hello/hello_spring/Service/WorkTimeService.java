@@ -167,82 +167,38 @@ public class WorkTimeService {
         return weeklyWorkDurations;
     }
 
-
-    /*
-    // 주간 데이터
-    public Map<String, Long> getWeeklyWorkHours(LocalDate startDate) {
-        Map<String, Long> weeklyWorkDurations = new LinkedHashMap<>();
-        for (DayOfWeek day : DayOfWeek.values()) {
-            weeklyWorkDurations.put(day.name(), 0L);
-        }
-
-        LocalDate endDate = startDate.plusDays(6);
-        List<WorkTime> workTimes = workTimeRepository.findAll().stream()
-                .filter(workTime -> !workTime.getStartTime().toLocalDate().isBefore(startDate) &&
-                        !workTime.getStartTime().toLocalDate().isAfter(endDate))
-                .filter(workTime -> {
-                    LocalDateTime endTime = workTime.getEndTime() != null ? workTime.getEndTime() : LocalDateTime.now();
-                    Duration duration = Duration.between(workTime.getStartTime(), endTime);
-                    return duration.compareTo(MAX_WORK_DURATION) <= 0;
-                })
-                .collect(Collectors.toList());
-
-        for (WorkTime workTime : workTimes) {
-            LocalDateTime startTime = workTime.getStartTime();
-            LocalDateTime endTime = workTime.getEndTime() != null ? workTime.getEndTime() : LocalDateTime.now(ZoneId.of("Asia/Seoul"));
-            long effectiveSeconds = workTime.getEffectiveWorkDurationSeconds();
-
-            while (startTime.isBefore(endTime) && effectiveSeconds > 0) {
-                DayOfWeek day = startTime.getDayOfWeek();
-                LocalDateTime nextHour = startTime.withMinute(0).withSecond(0).plusHours(1);
-                if (nextHour.isAfter(endTime)) {
-                    nextHour = endTime;
-                }
-                long duration = ChronoUnit.SECONDS.between(startTime, nextHour);
-                if (duration > effectiveSeconds) {
-                    duration = effectiveSeconds;
-                }
-
-                long currentDuration = weeklyWorkDurations.get(day.name());
-                long newDuration = currentDuration + duration;
-                weeklyWorkDurations.put(day.name(), Math.min(newDuration, 3600L)); // 시간당 최대 3600초 (60분)으로 제한
-                startTime = nextHour;
-                effectiveSeconds -= duration;
-            }
-        }
-
-        long totalWeeklySeconds = weeklyWorkDurations.values().stream().mapToLong(Long::longValue).sum();
-        logger.info("Weekly Work Durations from {} to {}: {}", startDate, endDate, weeklyWorkDurations);
-        return weeklyWorkDurations;
-    }
-    */
-
-    // 월간 데이터
-    /*
-    public Map<String, Long> getMonthlyWorkHours(int year, int month) {
+    public Map<String, Long> getMonthlyWorkHours(int year) {
         Map<String, Long> monthlyWorkDurations = new LinkedHashMap<>();
-        for (Month m : Month.values()) {
-            monthlyWorkDurations.put(m.name(), 0L);
+        for (Month month : Month.values()) {
+            monthlyWorkDurations.put(month.name(), 0L);
         }
 
-        LocalDate startDate = LocalDate.of(year, month, 1);
-        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+        for (Month month : Month.values()) {
+            Map<LocalDate, Map<String, Long>> workedDaysAndHours = getWorkedDaysAndHours(year, month.getValue());
 
-        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
-            Map<Integer, Long> dailyWorkHours = getDailyWorkHours(date);
-            long dailyTotalSeconds = dailyWorkHours.values().stream().mapToLong(Long::longValue).sum();
-            Month currentMonth = date.getMonth();
-            long currentDuration = monthlyWorkDurations.get(currentMonth.name());
-            long newDuration = currentDuration + dailyTotalSeconds;
-            monthlyWorkDurations.put(currentMonth.name(), newDuration);
+            long totalMonthlySeconds = workedDaysAndHours.values().stream()
+                    .mapToLong(dayMap -> dayMap.get("hours") * 3600 + dayMap.get("minutes") * 60 + dayMap.get("seconds"))
+                    .sum();
+
+            monthlyWorkDurations.put(month.name(), totalMonthlySeconds);
+
+            logger.info("Month: {}, Total Seconds: {}", month.name(), totalMonthlySeconds);
         }
 
-        logger.info("Monthly Work Durations for {}-{}: {}", year, month, monthlyWorkDurations);
+        for (Map.Entry<String, Long> entry : monthlyWorkDurations.entrySet()) {
+            long totalSeconds = entry.getValue();
+            long hours = totalSeconds / 3600;
+            long minutes = (totalSeconds % 3600) / 60;
+            logger.info("Month: {}, Total Seconds: {}, Hours: {}, Minutes: {}", entry.getKey(), totalSeconds, hours, minutes);
+        }
+
+        logger.info("Monthly Work Durations for year {}: {}", year, monthlyWorkDurations);
         return monthlyWorkDurations;
     }
 
-     */
 
+
+    /*
     public Map<String, Long> getMonthlyWorkHours(int year) {
         Map<String, Long> monthlyWorkDurations = new LinkedHashMap<>();
         for (Month month : Month.values()) {
@@ -254,52 +210,28 @@ public class WorkTimeService {
 
         for (LocalDate date = startOfYear; !date.isAfter(endOfYear); date = date.plusDays(1)) {
             Map<Integer, Long> dailyWorkHours = getDailyWorkHours(date);
-            long dailyTotalSeconds = dailyWorkHours.values().stream().mapToLong(Long::longValue).sum();
+            long totalDailySeconds = dailyWorkHours.values().stream().mapToLong(Long::longValue).sum();
             Month currentMonth = date.getMonth();
             long currentDuration = monthlyWorkDurations.get(currentMonth.name());
-            long newDuration = currentDuration + dailyTotalSeconds;
+            long newDuration = currentDuration + totalDailySeconds;
             monthlyWorkDurations.put(currentMonth.name(), newDuration);
 
-            logger.info("Date: {}, Total Seconds: {}, Current Month: {}, New Duration: {}", date, dailyTotalSeconds, currentMonth, newDuration);
+            logger.info("Date: {}, Total Seconds: {}, Current Month: {}, New Duration: {}", date, totalDailySeconds, currentMonth, newDuration);
+        }
+
+        // Convert total seconds to hours and minutes for logging and returning
+        for (Map.Entry<String, Long> entry : monthlyWorkDurations.entrySet()) {
+            long totalSeconds = entry.getValue();
+            long hours = totalSeconds / 3600;
+            long minutes = (totalSeconds % 3600) / 60;
+            logger.info("Month: {}, Total Seconds: {}, Hours: {}, Minutes: {}", entry.getKey(), totalSeconds, hours, minutes);
         }
 
         logger.info("Monthly Work Durations for year {}: {}", year, monthlyWorkDurations);
         return monthlyWorkDurations;
     }
 
-/* 이전에 쓰던 1코드
-    public Map<String, Long> getMonthlyWorkHours(int year) {
-        Map<String, Long> monthlyWorkDurations = new LinkedHashMap<>();
-        for (Month month : Month.values()) {
-            monthlyWorkDurations.put(month.name(), 0L);
-        }
-
-        List<WorkTime> workTimes = workTimeRepository.findAll().stream()
-                .filter(workTime -> workTime.getStartTime().getYear() == year)
-                .filter(workTime -> {
-                    LocalDateTime endTime = workTime.getEndTime() != null ? workTime.getEndTime() : LocalDateTime.now(ZoneId.of("Asia/Seoul"));
-                    return Duration.between(workTime.getStartTime(), endTime).compareTo(MAX_WORK_DURATION) <= 0;
-                })
-                .collect(Collectors.toList());
-
-        for (WorkTime workTime : workTimes) {
-            LocalDateTime startTime = workTime.getStartTime();
-            LocalDateTime endTime = workTime.getEndTime() != null ? workTime.getEndTime() : LocalDateTime.now(ZoneId.of("Asia/Seoul"));
-            long effectiveSeconds = workTime.getEffectiveWorkDurationSeconds();
-
-            Month month = startTime.getMonth();
-            long currentDuration = monthlyWorkDurations.get(month.name());
-            long newDuration = currentDuration + effectiveSeconds;
-            monthlyWorkDurations.put(month.name(), Math.min(newDuration, 3600L * 24 * startTime.toLocalDate().lengthOfMonth())); // 월간 최대 초 제한
-        }
-
-        logger.info("Monthly Work Durations for {}: {}", year, monthlyWorkDurations);
-        return monthlyWorkDurations;
-    }
-
- */
-
-
+     */
     // 시간 기능 위해 추가 코드
     public long calculateEffectiveWorkDuration(LocalDateTime startTime, LocalDateTime endTime, Duration totalPauseDuration) {
         if (startTime != null) {
@@ -325,6 +257,8 @@ public class WorkTimeService {
     public long calculateTotalPauseDuration(Duration totalPauseDuration) {
         return (totalPauseDuration != null ? totalPauseDuration : Duration.ZERO).getSeconds();
     }
+
+    // 확인용으로 작성한 코드라 api 명세서에는 따로 작성하지 않았습니다!
 
     public Map<LocalDate, Map<String, Long>> getWorkedDaysAndHours(int year, int month) {
         List<LocalDate> workedDaysInMonth = getWorkedDaysInMonth(year, month);

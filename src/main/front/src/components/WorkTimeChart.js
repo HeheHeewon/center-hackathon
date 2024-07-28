@@ -339,15 +339,15 @@ function WorkTimeChart() {
                 onChange={handleDateChange}
                 tileClassName={tileClassName}
             />
-            <Bar data={dailyData} options={dailyOptions} />
+            <Bar data={dailyData} options={dailyOptions}/>
             <h3>Total Work Duration: {Math.floor(totalWorkDuration / 60)}h {Math.floor(totalWorkDuration % 60)}m</h3>
             {currentWorkTimeId && (
                 <button onClick={() => handleEndWork(currentWorkTimeId)}>End Current Work</button>
             )}
             <h2>Weekly Work Duration Chart</h2>
-            <Bar data={weeklyData} options={weeklyOptions} />
+            <Bar data={weeklyData} options={weeklyOptions}/>
             <h2>Monthly Work Duration Chart</h2>
-            <Bar data={monthlyData} options={monthlyOptions} />
+            <Bar data={monthlyData} options={monthlyOptions}/>
         </div>
     );
 }
