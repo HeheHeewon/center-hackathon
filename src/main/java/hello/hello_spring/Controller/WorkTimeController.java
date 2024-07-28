@@ -70,4 +70,9 @@ public class WorkTimeController {
         return workTimeService.getWorkedDaysInMonth(year, month);
     }
 
+    @GetMapping("/workedDaysAndHours")
+    public Map<LocalDate, Map<String, Long>> getWorkedDaysAndHours(@RequestParam int year, @RequestParam int month) {
+        return workTimeService.getWorkedDaysAndHours(year, month);
+    }
+
 }

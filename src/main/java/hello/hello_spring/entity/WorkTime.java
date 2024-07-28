@@ -39,10 +39,12 @@ public class WorkTime {
 
     public void resume() {
         if (isPaused && lastPauseTime != null) {
-            Duration pauseDuration = Duration.between(lastPauseTime, LocalDateTime.now());
+            Duration pauseDuration = Duration.between(lastPauseTime, LocalDateTime.now(ZoneId.of("Asia/Seoul")));
             totalPauseDuration = totalPauseDuration.plus(pauseDuration);
-            this.lastPauseTime = null;
             this.isPaused = false;
+            // this.lastPauseTime = null;
+            // lastPauseTime = LocalDateTime.now(ZoneId.of("Asia/Seoul")); // Update lastPauseTime to now after resuming
+
         }
     }
 
