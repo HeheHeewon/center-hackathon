@@ -32,18 +32,27 @@
             }
         });
 
+        function showStretchingButton() {
+            console.log("Showing stretching button");
+            document.getElementById('notificationMessage').innerHTML =
+                "알림 권한 설정을 거부했습니다. 타이머가 끝났습니다. <button onclick='location.href=\"http://localhost:8080/stretching\"'>스트레칭 페이지로 이동</button>";
+        }
+
         function showNotification() {
+            console.log("Attempting to show notification");
             if (Notification.permission === "granted") {
                 var notification = new Notification("Timer Completed", {
                     body: "Time to do some eye exercises and stretching!",
                 });
-                notification.onclick = function(event) {
+                notification.onclick = function (event) {
                     event.preventDefault();
-                    window.open('http://localhost:8080');
+                    console.log("Notification clicked, redirecting to http://localhost:8080/stretching");
+                    window.location.href = 'http://localhost:8080/stretching';
                 };
                 console.log("Notification shown");
             } else {
                 console.log("Notification permission not granted");
+                showStretchingButton();
             }
         }
 
