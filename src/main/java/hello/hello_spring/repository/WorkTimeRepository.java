@@ -1,4 +1,4 @@
-package hello.hello_spring.Repository;
+package hello.hello_spring.repository;
 
 import hello.hello_spring.entity.WorkTime;
 import org.springframework.data.jpa.repository.JpaRepository;

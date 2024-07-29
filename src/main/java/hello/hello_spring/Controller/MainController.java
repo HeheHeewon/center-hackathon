@@ -1,4 +1,4 @@
-package com.example.centerthon.controller;
+package hello.hello_spring.Controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;

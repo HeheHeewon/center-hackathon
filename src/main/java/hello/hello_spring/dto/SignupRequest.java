@@ -1,4 +1,4 @@
-package com.example.centerthon.dto;
+package hello.hello_spring.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

@@ -1,9 +1,8 @@
-package com.example.centerthon.controller;
-import com.example.centerthon.dto.PasswordResetRequest;
-import com.example.centerthon.dto.SignupRequest;
-import com.example.centerthon.dto.UserResponse;
-import com.example.centerthon.entity.User;
-import com.example.centerthon.Service.UserService;
+package hello.hello_spring.Controller;
+import hello.hello_spring.Service.UserService;
+import hello.hello_spring.dto.PasswordResetRequest;
+import hello.hello_spring.dto.SignupRequest;
+import hello.hello_spring.dto.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,6 +21,7 @@ import java.util.Map;
 public class UserController {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
+
 
     @GetMapping("/signup")
     public String registerUser(Model model) {
@@ -51,6 +51,7 @@ public class UserController {
     public String login(){
         return "user/login";
     }
+
     @GetMapping("/login/error")
     public String loginError(Model model){
         model.addAttribute("loginErrorMsg","아이디 또는 비밀번호를 확인해주세요.");

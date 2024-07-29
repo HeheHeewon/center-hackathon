@@ -1,7 +1,6 @@
-package com.example.centerthon.repository;
-
-import com.example.centerthon.entity.User;
+package hello.hello_spring.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
+import hello.hello_spring.entity.User;
 import org.springframework.stereotype.Repository;
 
 @Repository

@@ -1,4 +1,4 @@
-package com.example.centerthon.Service;
+package hello.hello_spring.Service;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

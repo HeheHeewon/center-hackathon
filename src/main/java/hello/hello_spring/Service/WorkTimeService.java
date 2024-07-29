@@ -1,7 +1,7 @@
 package hello.hello_spring.Service;
 
 import hello.hello_spring.entity.WorkTime;
-import hello.hello_spring.Repository.WorkTimeRepository;
+import hello.hello_spring.repository.WorkTimeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

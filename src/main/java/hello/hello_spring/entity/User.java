@@ -1,6 +1,9 @@
-package com.example.centerthon.entity;
+package hello.hello_spring.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.Getter;
 
 import java.time.LocalDateTime;

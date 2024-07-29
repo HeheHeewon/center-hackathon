@@ -1,8 +1,8 @@
-package com.example.centerthon.Service;
+package hello.hello_spring.Service;
 
-import com.example.centerthon.constant.Roll;
-import com.example.centerthon.entity.User;
-import com.example.centerthon.repository.UserRepository;
+import hello.hello_spring.constant.Roll;
+import hello.hello_spring.entity.User;
+import hello.hello_spring.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

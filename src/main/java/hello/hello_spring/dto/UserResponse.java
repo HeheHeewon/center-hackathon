@@ -1,8 +1,6 @@
-package com.example.centerthon.dto;
+package hello.hello_spring.dto;
 
 import lombok.Getter;
-
-import java.time.LocalDateTime;
 
 @Getter
 public class UserResponse {
