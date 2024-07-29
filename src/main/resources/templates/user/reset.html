@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>암호 재설정</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<div class="reset-container">
+    <h2>암호 재설정</h2>
+    <p>계속하려면 서비스에서 사용하는 이메일 주소를 입력하십시오.</p>
+    <div id="message" style="color: red;"></div>
+    <div class="form-group">
+        <label for="email">이메일</label>
+        <input type="email" id="email" name="email" placeholder="이메일" required>
+    </div>
+    <div class="form-group">
+        <label for="newPassword">암호</label>
+        <input type="password" id="newPassword" name="newPassword" placeholder="암호" required>
+    </div>
+    <div class="form-group">
+        <label for="confirmPassword">암호 확인</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="암호 확인" required>
+    </div>
+    <div class="form-group">
+        <button onclick="submitReset()">계속</button>
+    </div>
+
+    <script>
+        function submitReset() {
+            const email = document.getElementById('email').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (!email || !newPassword || !confirmPassword) {
+                document.getElementById('message').textContent = '모든 필드를 채워주세요.';
+                document.getElementById('message').style.color = 'red';
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                document.getElementById('message').textContent = '비밀번호가 일치하지 않습니다.';
+                document.getElementById('message').style.color = 'red';
+                return;
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '/reset',
+                contentType: 'application/json; charset=utf-8',
+                dataType:'json',
+                data: JSON.stringify({ email: email, newPassword: newPassword, confirmPassword: confirmPassword }),
+                success: function(data) {
+                    $('#message').text(data.message).css('color', 'green');
+                    if (data.redirectUrl) {
+                        window.location.href = data.redirectUrl;
+                    }
+                },
+                error: function(xhr, status, error) {
+                    $('#message').text('비밀번호 재설정 실패: ' + xhr.responseText).css('color', 'red');
+                }
+            });
+        }
+    </script>
+</div>
+</body>
+</html>

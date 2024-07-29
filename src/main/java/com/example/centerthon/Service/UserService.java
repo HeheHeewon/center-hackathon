@@ -1,0 +1,46 @@
+package com.example.centerthon.Service;
+
+import com.example.centerthon.constant.Roll;
+import com.example.centerthon.dto.PasswordResetRequest;
+import com.example.centerthon.dto.SignupRequest;
+import com.example.centerthon.entity.User;
+import com.example.centerthon.repository.UserRepository;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+@Transactional
+@RequiredArgsConstructor //의존성 주입 중 생성자 주입을 코드 없이 자동
+public class UserService {
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public  User createUser(SignupRequest signupRequest, PasswordEncoder passwordEncoder) {
+        User user = new User(signupRequest.getEmail().toString(), passwordEncoder.encode(signupRequest.getPassword().toString()));
+        validateDuplicateMember(user);
+        // 사용자 생성 로직
+        return userRepository.save(user);
+
+    }
+    private void validateDuplicateMember(User user) {
+        User valiUser= userRepository.findByEmail(user.getEmail());
+        if(valiUser!=null){
+            throw new IllegalStateException("이미 가입된 회원입니다. ");
+        }
+    }
+    public void resetPassword(PasswordResetRequest passwordResetRequest) {
+        User user = userRepository.findByEmail(passwordResetRequest.getEmail());
+        if (user == null) {
+            throw new UsernameNotFoundException("해당 이메일을 가진 사용자를 찾을 수 없습니다.");
+        }
+
+        user.setPassword(passwordEncoder.encode(passwordResetRequest.getNewPassword()));
+        userRepository.save(user);
+    }
+}

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Stretching Timer</title>
+</head>
+<body>
+<h1>Stretching Video</h1>
+<div id="video">
+    <iframe width="560" height="315"
+            th:src="'https://www.youtube.com/embed/' + ${videoId}"
+            frameborder="0"
+            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+    </iframe>
+    <button onclick="location.href='/'">Home</button >
+    <button onClick="history.back();">뒤로 가기</button >
+</div>
+</body>
+</html>
