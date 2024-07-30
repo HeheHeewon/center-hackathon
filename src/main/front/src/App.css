@@ -1,38 +1,28 @@
-.App {
-  text-align: center;
+body, html, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.app-container {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: start;
+  background: url('./background/white.svg'); /* 배경 이미지 반복 */
+  background-size: contain; /* 이미지 크기를 화면 가로에 맞춤 */
+  background-position: center top; /* 이미지 위치를 중앙 상단에 맞춤 */
+  width: 100%;
+  height: 200%; /* 두 화면을 포함하도록 충분한 높이 설정 */
+}
+
+.section1, .section2 {
+  display: flex;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: center;
+  height: 100vh; /* 각 화면의 높이를 100vh로 설정 */
+  width: 100%;
 }
 
-.App-link {
-  color: #61dafb;
-}
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}

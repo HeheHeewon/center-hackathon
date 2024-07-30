@@ -1,0 +1,73 @@
+/* WorkTimeTracker.css */
+
+.button-group {
+    margin-left: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.button-group button {
+    background: none;
+    border: 1px solid #fff !important;
+    width: 9rem;
+    height: 3rem;
+    color: #fff;
+    padding: 15px 20px;
+    cursor: pointer;
+    border-radius: 100px !important;
+    font-size: 0.8rem !important;
+}
+
+.button-group button {
+  background: none;
+  border: 2px solid #fff;
+  color: #fff;
+  padding: 10px 20px;
+  margin: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 1.2rem;
+}
+
+.button-group button:hover {
+  background-color: #555;
+}
+
+
+.Wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.button-group button:hover {
+    background-color: #555;
+}
+
+.flip-clock {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flip-unit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #4c4c4c;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 5px;
+}
+
+.flip-number {
+    font-size: 6rem; /* 숫자 크기 수정 */
+    color: #eaeaea;
+}
+
+.flip-colon {
+    font-size: 6rem; /* 콜론 크기 수정 */
+    color: #eaeaea;
+    margin: 0 10px;
+}

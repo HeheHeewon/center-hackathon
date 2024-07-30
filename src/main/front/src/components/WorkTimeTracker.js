@@ -1,3 +1,5 @@
+import './WorkTimeTracker.css';
+import FlipClock from './FlipClock';
 import React, { useState, useEffect, useRef } from 'react';
 
 function WorkTimeTracker() {
@@ -126,11 +128,11 @@ function WorkTimeTracker() {
     };
 
     const formatTime = (seconds) => {
-        if (isNaN(seconds) || seconds < 0) return '0h 0m 0s';
+        if (isNaN(seconds) || seconds < 0) return { hours: 0, minutes: 0, seconds: 0 };
         const h = Math.floor(seconds / 3600);
         const m = Math.floor((seconds % 3600) / 60);
         const s = seconds % 60;
-        return `${h}h ${m}m ${s}s`;
+        return { hours: h, minutes: m, seconds: s };
     };
 
     const formatDateTime = (date) => {
@@ -138,30 +140,23 @@ function WorkTimeTracker() {
         return `${date.getFullYear()}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
     };
 
+    const formattedTime = formatTime(timer);
+
     return (
-        <div>
-            <h1>Work Time Tracker</h1>
-            <button onClick={startWork} disabled={currentWorkTime && !isPaused}>Start Work</button>
-            <button onClick={pauseWork} disabled={!currentWorkTime || isPaused}>Pause Work</button>
-            <button onClick={resumeWork} disabled={!currentWorkTime || !isPaused}>Resume Work</button>
-            <button onClick={endWork} disabled={!currentWorkTime}>End Work</button>
-            {currentWorkTime && (
-                <div>
-                    <h2>Current Work Time: {formatTime(timer)}</h2>
-                </div>
-            )}
-            <h2>Work Times</h2>
-            <ul>
-                {workTimes.map(workTime => (
-                    <li key={workTime.id}>
-                        Start: {formatDateTime(workTime.startTime)}<br />
-                        End: {formatDateTime(workTime.endTime)}<br />
-                        Total Work Duration: {formatTime(workTime.totalWorkDurationInSeconds)}<br />
-                        Total Pause Duration: {formatTime(workTime.totalPauseDurationInSeconds)}<br />
-                        Effective Work Duration: {formatTime(workTime.effectiveWorkDurationInSeconds)}<br />
-                    </li>
-                ))}
-            </ul>
+        <div className="work-time-tracker">
+            <div className="Wrapper">
+            <div>
+                <FlipClock hours={formattedTime.hours} minutes={formattedTime.minutes} seconds={formattedTime.seconds} />
+            </div>
+
+            <div className = "button-group">
+                <button onClick={startWork} disabled={currentWorkTime && !isPaused}>START</button>
+                <button onClick={pauseWork} disabled={!currentWorkTime || isPaused}>PAUSE</button>
+                <button onClick={resumeWork} disabled={!currentWorkTime || !isPaused}>RESUME</button>
+                <button onClick={endWork} disabled={!currentWorkTime}>STOP</button>
+            </div>
+            </div>
+
         </div>
     );
 }

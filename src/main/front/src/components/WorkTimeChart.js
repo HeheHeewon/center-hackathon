@@ -5,10 +5,12 @@ import Chart from 'chart.js/auto';
 import { registerables } from 'chart.js';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+import './WorkTimeChart.css';
 
 Chart.register(...registerables);
 
 function WorkTimeChart() {
+    const [activeTab, setActiveTab] = useState('daily'); // 탭 상태 추가
     const [workHours, setWorkHours] = useState({});
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [workedDays, setWorkedDays] = useState([]);
@@ -334,20 +336,45 @@ function WorkTimeChart() {
 
     return (
         <div>
-            <h2>Work Duration Chart</h2>
-            <Calendar
-                onChange={handleDateChange}
-                tileClassName={tileClassName}
-            />
-            <Bar data={dailyData} options={dailyOptions}/>
-            <h3>Total Work Duration: {Math.floor(totalWorkDuration / 60)}h {Math.floor(totalWorkDuration % 60)}m</h3>
-            {currentWorkTimeId && (
-                <button onClick={() => handleEndWork(currentWorkTimeId)}>End Current Work</button>
-            )}
-            <h2>Weekly Work Duration Chart</h2>
-            <Bar data={weeklyData} options={weeklyOptions}/>
-            <h2>Monthly Work Duration Chart</h2>
-            <Bar data={monthlyData} options={monthlyOptions}/>
+            <div className ="Wrapper1">
+                <Calendar onChange={handleDateChange} tileClassName={tileClassName}/>
+
+                <div className ="chart">
+                    <div className="TextWrapper">
+                        <h2>한눈에 확인하는 나의 근무 시간</h2>
+                        <h3>앉은 자리에서 버튼 하나로 기록해요!</h3>
+                    </div>
+                    {activeTab === 'daily' && (
+                        <>
+                            <h2>Work Duration Chart</h2>
+                            <h3>Total Work Duration: {Math.floor(totalWorkDuration / 60)}h {Math.floor(totalWorkDuration % 60)}m</h3>
+                            <Bar data={dailyData} options={dailyOptions}/>
+                            {currentWorkTimeId && (
+                                <button onClick={() => handleEndWork(currentWorkTimeId)}>End Current Work</button>
+                            )}
+                        </>
+                    )}
+                    {activeTab === 'weekly' && (
+                        <>
+                            <h2>Weekly Work Duration Chart</h2>
+                            <Bar data={weeklyData} options={weeklyOptions}/>
+                        </>
+                    )}
+                    {activeTab === 'monthly' && (
+                        <>
+                            <h2>Monthly Work Duration Chart</h2>
+                            <Bar data={monthlyData} options={monthlyOptions}/>
+                        </>
+                    )}
+            
+                    <div className="tabs">
+                        <button className={`tab ${activeTab === 'daily' ? 'active' : ''}`} onClick={() => setActiveTab('daily')}></button>
+                        <button className={`tab ${activeTab === 'weekly' ? 'active' : ''}`} onClick={() => setActiveTab('weekly')}></button>
+                        <button className={`tab ${activeTab === 'monthly' ? 'active' : ''}`} onClick={() => setActiveTab('monthly')}></button>
+                    </div>
+                </div>
+            </div>
+
         </div>
     );
 }
