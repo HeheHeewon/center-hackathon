@@ -1,13 +1,14 @@
+import React, { useState, useEffect, useRef } from 'react';
 import './WorkTimeTracker.css';
 import FlipClock from './FlipClock';
-import React, { useState, useEffect, useRef } from 'react';
 
-function WorkTimeTracker() {
+function WorkTimeTracker({ onBackgroundChange }) {
     const [workTimes, setWorkTimes] = useState([]);
     const [currentWorkTime, setCurrentWorkTime] = useState(null);
     const [timer, setTimer] = useState(0);
     const [isPaused, setIsPaused] = useState(false);
     const [lastPauseTime, setLastPauseTime] = useState(null);
+    const [buttonState, setButtonState] = useState(null); // 버튼 상태 추가
     const timeoutIdRef = useRef(null); // 타이머 ID를 저장할 ref
 
     useEffect(() => {
@@ -25,15 +26,14 @@ function WorkTimeTracker() {
                 const newTimer = elapsedSinceStart - totalPaused;
                 setTimer(newTimer >= 0 ? newTimer : 0);
 
-                // 다음 tick 예약
                 timeoutIdRef.current = setTimeout(tick, 1000);
             };
 
-            tick(); // 타이머 시작
+            tick(); 
 
-            return () => clearTimeout(timeoutIdRef.current); // 컴포넌트 언마운트 시 클린업
+            return () => clearTimeout(timeoutIdRef.current);
         } else {
-            clearTimeout(timeoutIdRef.current); // 타이머 정지
+            clearTimeout(timeoutIdRef.current);
         }
     }, [currentWorkTime, isPaused]);
 
@@ -51,7 +51,7 @@ function WorkTimeTracker() {
             })
             .catch(error => console.error('Error fetching work times:', error));
     };
-
+    
     const startWork = () => {
         fetch('/api/worktime/start', { method: 'POST' })
             .then(response => response.json())
@@ -68,30 +68,11 @@ function WorkTimeTracker() {
                 setCurrentWorkTime(newWorkTime);
                 setIsPaused(false);
                 setTimer(0);
+                updateButtonAndBackground('start');
             })
             .catch(error => console.error('Error starting work:', error));
     };
 
-    const endWork = () => {
-        if (currentWorkTime) {
-            fetch(`/api/worktime/end/${currentWorkTime.id}`, { method: 'POST' })
-                .then(response => response.json())
-                .then(data => {
-                    const updatedWorkTime = {
-                        ...currentWorkTime,
-                        endTime: new Date(data.endTime),
-                        totalWorkDurationInSeconds: data.totalWorkDurationInSeconds,
-                        totalPauseDurationInSeconds: data.totalPauseDurationInSeconds,
-                        effectiveWorkDurationInSeconds: data.totalWorkDurationInSeconds - data.totalPauseDurationInSeconds
-                    };
-                    setWorkTimes(prev => [...prev, updatedWorkTime]);
-                    setCurrentWorkTime(null);
-                    setIsPaused(false);
-                    setTimer(0);
-                })
-                .catch(error => console.error('Error ending work:', error));
-        }
-    };
 
     const pauseWork = () => {
         if (currentWorkTime && !isPaused) {
@@ -100,6 +81,7 @@ function WorkTimeTracker() {
                 .then(data => {
                     setLastPauseTime(new Date(data.lastPauseTime));
                     setIsPaused(true);
+                    updateButtonAndBackground('pause');
                 })
                 .catch(error => console.error('Error pausing work:', error));
         }
@@ -122,8 +104,40 @@ function WorkTimeTracker() {
                         };
                         return updatedWorkTime;
                     });
+                    updateButtonAndBackground('resume');
                 })
                 .catch(error => console.error('Error resuming work:', error));
+        }
+    };
+
+    
+    const endWork = () => {
+        if (currentWorkTime) {
+            fetch(`/api/worktime/end/${currentWorkTime.id}`, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    const updatedWorkTime = {
+                        ...currentWorkTime,
+                        endTime: new Date(data.endTime),
+                        totalWorkDurationInSeconds: data.totalWorkDurationInSeconds,
+                        totalPauseDurationInSeconds: data.totalPauseDurationInSeconds,
+                        effectiveWorkDurationInSeconds: data.totalWorkDurationInSeconds - data.totalPauseDurationInSeconds
+                    };
+                    setWorkTimes(prev => [...prev, updatedWorkTime]);
+                    setCurrentWorkTime(null);
+                    setIsPaused(false);
+                    setTimer(0);
+                    updateButtonAndBackground('stop');
+                })
+                .catch(error => console.error('Error ending work:', error));
+        }
+    };
+
+
+    const updateButtonAndBackground = (state) => {
+        setButtonState(state);
+        if (onBackgroundChange) {
+            onBackgroundChange(state);
         }
     };
 
@@ -145,18 +159,17 @@ function WorkTimeTracker() {
     return (
         <div className="work-time-tracker">
             <div className="Wrapper">
-            <div>
-                <FlipClock hours={formattedTime.hours} minutes={formattedTime.minutes} seconds={formattedTime.seconds} />
-            </div>
+                <div>
+                    <FlipClock hours={formattedTime.hours} minutes={formattedTime.minutes} seconds={formattedTime.seconds} />
+                </div>
 
-            <div className = "button-group">
-                <button onClick={startWork} disabled={currentWorkTime && !isPaused}>START</button>
-                <button onClick={pauseWork} disabled={!currentWorkTime || isPaused}>PAUSE</button>
-                <button onClick={resumeWork} disabled={!currentWorkTime || !isPaused}>RESUME</button>
-                <button onClick={endWork} disabled={!currentWorkTime}>STOP</button>
+                <div className="button-group">
+                    <button onClick={startWork} disabled={currentWorkTime && !isPaused} className={buttonState === 'start' ? 'start' : ''}>START</button>
+                    <button onClick={pauseWork} disabled={!currentWorkTime || isPaused} className={buttonState === 'pause' ? 'pause' : ''}>PAUSE</button>
+                    <button onClick={resumeWork} disabled={!currentWorkTime || !isPaused} className={buttonState === 'resume' ? 'resume' : ''}>RESUME</button>
+                    <button onClick={endWork} disabled={!currentWorkTime} className={buttonState === 'stop' ? 'stop' : ''}>STOP</button>
+                </div>
             </div>
-            </div>
-
         </div>
     );
 }

@@ -7,6 +7,8 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import './WorkTimeChart.css';
 
+import good from './doinggood.svg';
+
 Chart.register(...registerables);
 
 function WorkTimeChart() {
@@ -176,28 +178,28 @@ function WorkTimeChart() {
             {
                 label: 'Work Duration (in minutes)',
                 data: Object.values(workHours).map(minutes => parseFloat(minutes)),
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(74,92,255)',
+                borderColor: 'rgba(74,92,255)',
                 borderWidth: 1,
             },
         ],
     };
 
     const weeklyData = {
-        labels: ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'],
+        labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
         datasets: [
             {
                 label: 'Work Duration (in hours)',
                 data: ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'].map(day => parseFloat(weeklyWorkHours[day] || 0)),
-                backgroundColor: 'rgba(153, 102, 255, 0.2)',
-                borderColor: 'rgba(153, 102, 255, 1)',
+                backgroundColor: 'rgba(74,92,255)',
+                borderColor: 'rgba(74,92,255)',
                 borderWidth: 1,
             },
         ],
     };
 
     const monthlyData = {
-        labels: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
+        labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
         datasets: [
             {
                 label: 'Work Duration (in hours)',
@@ -209,8 +211,8 @@ function WorkTimeChart() {
                     }
                     return value;
                 }),
-                backgroundColor: 'rgba(255, 159, 64, 0.2)',
-                borderColor: 'rgba(255, 159, 64, 1)',
+                backgroundColor: 'rgba(254, 149, 52)',
+                borderColor: 'rgba(254, 149, 52)',
                 borderWidth: 1,
             },
         ],
@@ -223,10 +225,6 @@ function WorkTimeChart() {
             y: {
                 beginAtZero: true,
                 max: 60,
-                title: {
-                    display: true,
-                    text: 'Work Duration (minutes)',
-                },
                 ticks: {
                     stepSize: 5,
                     callback: function (value) {
@@ -235,10 +233,6 @@ function WorkTimeChart() {
                 },
             },
             x: {
-                title: {
-                    display: true,
-                    text: 'Time of Day',
-                },
                 ticks: {
                     stepSize: 1,
                 },
@@ -263,10 +257,6 @@ function WorkTimeChart() {
             y: {
                 beginAtZero: true,
                 max: 10,
-                title: {
-                    display: true,
-                    text: 'Work Duration (hours)',
-                },
                 ticks: {
                     stepSize: 2,
                     callback: function (value) {
@@ -275,10 +265,6 @@ function WorkTimeChart() {
                 },
             },
             x: {
-                title: {
-                    display: true,
-                    text: 'Day of Week',
-                },
                 ticks: {
                     stepSize: 1,
                 },
@@ -303,10 +289,6 @@ function WorkTimeChart() {
             y: {
                 beginAtZero: true,
                 max: 180, // y축 최대값을 180으로 설정
-                title: {
-                    display: true,
-                    text: 'Work Duration (hours)',
-                },
                 ticks: {
                     callback: function (value) {
                         return `${value}h`;
@@ -314,10 +296,7 @@ function WorkTimeChart() {
                 },
             },
             x: {
-                title: {
-                    display: true,
-                    text: 'Month',
-                },
+
             },
         },
         plugins: {
@@ -344,10 +323,11 @@ function WorkTimeChart() {
                         <h2>한눈에 확인하는 나의 근무 시간</h2>
                         <h3>앉은 자리에서 버튼 하나로 기록해요!</h3>
                     </div>
+
+                    <div className="chartWrapper">
                     {activeTab === 'daily' && (
                         <>
-                            <h2>Work Duration Chart</h2>
-                            <h3>Total Work Duration: {Math.floor(totalWorkDuration / 60)}h {Math.floor(totalWorkDuration % 60)}m</h3>
+                            <h3>오늘 {Math.floor(totalWorkDuration / 60)}시간 {Math.floor(totalWorkDuration % 60)}분</h3>
                             <Bar data={dailyData} options={dailyOptions}/>
                             {currentWorkTimeId && (
                                 <button onClick={() => handleEndWork(currentWorkTimeId)}>End Current Work</button>
@@ -356,22 +336,31 @@ function WorkTimeChart() {
                     )}
                     {activeTab === 'weekly' && (
                         <>
-                            <h2>Weekly Work Duration Chart</h2>
+                            <h3>Weekly Overview</h3>
                             <Bar data={weeklyData} options={weeklyOptions}/>
                         </>
                     )}
                     {activeTab === 'monthly' && (
                         <>
-                            <h2>Monthly Work Duration Chart</h2>
+                            <h3>Monthly Overview</h3>
                             <Bar data={monthlyData} options={monthlyOptions}/>
                         </>
                     )}
+
+                    
+                    <div className="svgWrapper">
+                        <img src={good} />
+                    </div>
+
+                    </div>
+
             
                     <div className="tabs">
                         <button className={`tab ${activeTab === 'daily' ? 'active' : ''}`} onClick={() => setActiveTab('daily')}></button>
                         <button className={`tab ${activeTab === 'weekly' ? 'active' : ''}`} onClick={() => setActiveTab('weekly')}></button>
                         <button className={`tab ${activeTab === 'monthly' ? 'active' : ''}`} onClick={() => setActiveTab('monthly')}></button>
                     </div>
+
                 </div>
             </div>
 
