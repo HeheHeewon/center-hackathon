@@ -1,13 +1,17 @@
 package hello.hello_spring.Controller;
+
 import hello.hello_spring.Service.UserService;
 import hello.hello_spring.dto.PasswordResetRequest;
 import hello.hello_spring.dto.SignupRequest;
-import hello.hello_spring.dto.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -15,20 +19,19 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
-
-@Controller
+@RestController  // RestController로 변경
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
-
+    private final AuthenticationManager authenticationManager;
 
     @GetMapping("/signup")
     public String registerUser(Model model) {
-        model.addAttribute("SignupRequset", new SignupRequest());
+        model.addAttribute("SignupRequest", new SignupRequest());
         return "user/signup";
-
     }
+
     @PostMapping("/signup")
     @ResponseBody
     public ResponseEntity<?> registerUser(@RequestBody SignupRequest signupRequest) {
@@ -39,7 +42,7 @@ public class UserController {
 
         try {
             userService.createUser(signupRequest, passwordEncoder);
-            response.put("redirectUrl", "http://localhost:8080/"); // 클라이언트 요청에 따라 리디렉션 URL 포함
+            response.put("redirectUrl", "http://localhost:8080/");
             return ResponseEntity.ok().body(response);
         } catch (IllegalStateException e) {
             response.put("message", e.getMessage());
@@ -48,23 +51,44 @@ public class UserController {
     }
 
     @GetMapping("/login")
-    public String login(){
+    public String login() {
         return "user/login";
     }
 
     @GetMapping("/login/error")
-    public String loginError(Model model){
-        model.addAttribute("loginErrorMsg","아이디 또는 비밀번호를 확인해주세요.");
-        return "/user/login";
-
+    public String loginError(Model model) {
+        model.addAttribute("loginErrorMsg", "아이디 또는 비밀번호를 확인해주세요.");
+        return "user/login";
     }
+
+//    @PostMapping("/login")
+//    @ResponseBody
+//    public ResponseEntity<?> loginUser(@RequestBody Map<String, String> loginRequest) {
+//        try {
+//            UsernamePasswordAuthenticationToken authenticationToken =
+//                    new UsernamePasswordAuthenticationToken(loginRequest.get("email"), loginRequest.get("password"));
+//
+//            Authentication authentication = authenticationManager.authenticate(authenticationToken);
+//            SecurityContextHolder.getContext().setAuthentication(authentication);
+//
+//            Map<String, String> response = new HashMap<>();
+//            response.put("message", "Login successful");
+//            return ResponseEntity.ok().body(response);
+//        } catch (AuthenticationException e) {
+//            Map<String, String> response = new HashMap<>();
+//            response.put("message", "Login failed");
+//            return ResponseEntity.status(401).body(response);
+//        }
+//    }
+
     @GetMapping("/reset")
     public String resetPassword(Model model) {
         model.addAttribute("PasswordResetRequest", new PasswordResetRequest());
         return "user/reset";
-
     }
+
     @PostMapping("/reset")
+    @ResponseBody
     public ResponseEntity<?> resetPassword(@Validated @RequestBody PasswordResetRequest passwordResetRequest) {
         if (!passwordResetRequest.getNewPassword().equals(passwordResetRequest.getConfirmPassword())) {
             Map<String, String> response = new HashMap<>();
@@ -91,7 +115,4 @@ public class UserController {
             return ResponseEntity.status(500).body(response);
         }
     }
-
-
 }
-

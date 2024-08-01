@@ -11,16 +11,18 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 public class User {
+
     // getter와 setter
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String email;
     private String password;
     private LocalDateTime createdAt;
 
     public User() {
+
         this.createdAt = LocalDateTime.now();
     }
 
@@ -30,12 +32,26 @@ public class User {
         this.createdAt = LocalDateTime.now();
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public void setId(Long id) {
+
         this.id = id;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+
+    public String getPassword() {
+        return password;
     }
 
     public void setPassword(String password) {
