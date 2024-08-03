@@ -65,7 +65,7 @@ const EyeStretching = () => {
             )}
             {completed && (
                 <div className={`completed-box fade-in ${fadeOut ? 'fade-out' : ''}`}>
-                    <p>잘하셨어요! 더 많은 운동은 아래에 첨부되어 있습니다</p>
+                    <p>잘하셨어요! 더 많은 운동은 아래에 첨부되어 있습니다.</p>
                     <button className="restart-button" onClick={restart}>다시 한번 하시겠어요?</button>
                 </div>
             )}

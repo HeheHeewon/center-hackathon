@@ -6,6 +6,8 @@ import Signup from "./components/Signup";
 import Timer from "./components/Timer";
 import Stretching from './components/Stretching';
 import ForgotPassword from "./components/ForgotPassword";
+import Main from "./components/main";
+
 import './App.css';
 
 
@@ -34,6 +36,9 @@ function App() {
                         <li>
                             <Link to="/stretching">Stretching</Link>
                         </li>
+                        <li>
+                            <Link to="/main">Main</Link>
+                        </li>
                     </ul>
                 </nav>
                 <Routes>
@@ -43,6 +48,7 @@ function App() {
                     <Route path="/reset" element={<ForgotPassword/>} />
                     <Route path="/timer" element={<Timer />} />
                     <Route path="/stretching" element={<Stretching/>}/>
+                    <Route path="/main" element={<Main/>}/>
                 </Routes>
             </div>
         </Router>

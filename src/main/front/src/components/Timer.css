@@ -148,3 +148,8 @@ body, html, #root {
     border-top: 6px solid #fff;
     transform: translateY(-50%);
 }
+
+.button-group button.active {
+    background-color: #D07000;
+    color: #fff; 
+}
