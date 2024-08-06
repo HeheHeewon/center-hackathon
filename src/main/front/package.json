@@ -1,5 +1,5 @@
 {
-  "proxy": "https://center-hackathon1:8080",
+  "proxy": "https://port-0-center-hackathon1-lzifj2fc89e7cae1.sel4.cloudtype.app/",
   "name": "front",
   "version": "0.1.0",
   "private": true,
