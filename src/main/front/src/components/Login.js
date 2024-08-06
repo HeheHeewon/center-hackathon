@@ -21,7 +21,7 @@ const Login = () => {
         };
 
         try {
-            const response = await fetch('https://center-hackathon1:8080/login', {
+            const response = await fetch('https://port-0-center-hackathon1-lzifj2fc89e7cae1.sel4.cloudtype.app/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
