@@ -20,7 +20,7 @@ const Login = () => {
             <main className="login-main">
                 <div className="login-container">
                     <h3>(서비스 이름)에 로그인 하세요</h3>
-                    <form id="login-form" action="https://center-hackathon1:8080/login" method="POST" className="login-form" onSubmit={handleSubmit}>
+                    <form id="login-form" action="https://port-0-center-hackathon1-lzifj2fc89e7cae1.sel4.cloudtype.app/login" method="POST" className="login-form" onSubmit={handleSubmit}>
                         <div className="input-container">
                             <input
                                 type="email"
