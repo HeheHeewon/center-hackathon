@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>홈</title>
+</head>
+<body>
+<nav>
+    <ul>
+        <li><a sec:authorize="isAnonymous()" href="/login">로그인</a>
+            <a sec:authorize="isAuthenticated()" href="/logout">로그아웃</a></li>
+        <li><a href="/timer">타이머 및 알림</a></li>
+    </ul>
+</nav>
+</body>
+</html>
+

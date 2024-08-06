@@ -1,0 +1,63 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css");
+
+body {
+    font-family: Pretendard;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    width: 100%;
+    top: 0;
+    left: 0;
+    background-color: transparent; /* 여기서 none을 transparent로 변경 */
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+    height: 60px; /* 헤더 높이 설정 */
+}
+
+.left-menu {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    height: 20px;
+    margin-right: 1rem;
+}
+
+.white_menu {
+    list-style: none;
+    display: flex;
+    margin-left: 20px;
+    padding: 0;
+}
+
+.white_menu li {
+    margin: 20px;
+}
+
+.white_menu a {
+    color: #ffffff !important; /* 글자색을 좀 더 눈에 잘 띄게 변경 */
+    text-decoration: none;
+    font-size: 0.7rem;
+}
+
+.white_menu a:hover {
+    text-decoration: underline;
+}
+
+.right-menu {
+    display: flex;
+    align-items: center;
+}
+
+.icons3 img {
+    width: 20px;
+    margin-left: 5px;
+}

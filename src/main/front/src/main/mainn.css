@@ -1,0 +1,203 @@
+
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css");
+
+* {    
+    font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+}
+
+/*main1 화면*/
+.m1-container {
+    position: relative;
+    display: inline-block;
+}
+
+.icons {
+    display: block;
+    height: 600px !important;
+    margin-left: 100px;
+}
+
+.m1-textbox {
+    position: absolute;
+    top: 50%;
+    left: 30%;
+    width: 700px !important; 
+    transform: translate(-50%, -50%);
+}
+
+
+.custom-button {
+    position: absolute;
+    top: 82%;
+    left: 65%;
+    font-weight: 500;
+    padding: 10px 20px;
+    background-color: #FF7D34; 
+    color: white;
+    border: none;
+    border-radius: 24px; 
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s, box-shadow 0.3s; 
+}
+
+.custom-button .arrow {
+    margin-left: 8px;
+    font-size: 18px;
+}
+
+.custom-button:hover {
+    background-color: #d37243; 
+}
+
+
+/*main2 화면*/
+
+.m2-t1, .m2-t2 {
+    font-weight: 600;
+    font-size: 25px;
+}
+
+.m2-t2 {
+    margin-top: 10px;
+}
+
+/*main3 화면*/
+.m3-container {
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+
+.m3-textbox {
+    position: absolute;
+    top: 10%;
+    left: 25%;
+}
+
+.orange-text {
+    color: #FE7A01;
+    font-weight: 600;
+    font-size: 22px;
+    margin-bottom: 25px;
+    margin-left: -10px;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.black-bold-text{
+    font-weight: 600;
+    font-size: 30px;
+}
+
+.m3-img {
+    position: absolute;
+    height: 500px !important;
+    top: 23%;
+    left: 30%;
+}
+
+/*main4 화면*/
+.m4-container {
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+
+.m4-textbox {
+    position: absolute;
+    top: 45%;
+    left: 25%;
+}
+
+.black-text{
+    margin-top: 20px;
+    font-weight: 500;
+    font-size: 17px;
+    color: 535353;
+}
+
+.m4-img {
+    position: absolute;
+    height: 400px !important;
+    top: 25%;
+    right: 20%;
+}
+
+/*main5 화면*/
+.m5-container {
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+
+.m5-textbox {
+    position: absolute;
+    bottom: 18%;
+    left: 15%;
+}
+
+.m5-img {
+    position: absolute;
+    height: 500px !important;
+    top: 0%;
+    right: 20%;
+}
+
+.left{
+    display: flex;
+    justify-content: flex-start !important;
+}
+
+/*main6 화면*/
+.m6-container {
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+
+.m6-textbox {
+    position: absolute;
+    top: 10%;
+    right: 20%;
+}
+
+.m6-img {
+    position: absolute;
+    height: 500px !important;
+    bottom: 5%;
+    right: 20%;
+}
+
+/*main7 화면*/
+.m7-container {
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+
+.m7-textbox {
+    position: absolute;
+    top: 35%;
+    right: 25%;
+}
+
+.m7-img {
+    position: absolute;
+    height: 400px !important;
+    top: 25%;
+    left: 15%;
+}
+
+.Footer{
+    width: 100%;
+    padding: 5px 0; 
+    font-weight: 600;
+    justify-content: center;
+    display: block;
+    position: absolute;
+    bottom: 0%;
+    left: 0%;
+    color: white;
+    background-color: black;
+}
