@@ -26,7 +26,7 @@ const Signup = () => {
         };
 
         try {
-            const response = await fetch('https://center-hackathon1:8080/signup', {
+            const response = await fetch('https://port-0-center-hackathon1-lzifj2fc89e7cae1.sel4.cloudtype.app/signup', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
