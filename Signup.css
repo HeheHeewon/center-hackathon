@@ -1,0 +1,92 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #F1F2F4;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.App {
+    text-align: center;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.signup-main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.signup-container {
+    width: 500px;
+    max-width: 90%;
+}
+
+.signup-container h2 {
+    margin-bottom: 2rem;
+}
+
+.signup-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.email-container,
+.password-container,
+.confirm-password-container {
+    display: flex;
+    align-items: center;
+    border: 1px solid #BBB;
+    border-radius: 10px; 
+    padding: 0.5rem;
+    position: relative;
+}
+
+.signup-input {
+    flex: 1;
+    border: none;
+    background: none;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border-radius: 10px;
+}
+
+.signup-input:focus {
+    outline: none;
+}
+
+.signup-button {
+    padding: 0.75rem;
+    border: none;
+    border-radius: 5px;
+    background-color: #007BFF;
+    color: white;
+    font-size: 0.8rem;
+    cursor: pointer;
+    margin-top: 1rem;
+    width: 100px;
+    align-self: flex-end;
+}
+
+.signup-button:disabled {
+    background-color: rgba(0, 130, 249, 0.25);
+    cursor: not-allowed;
+}
+
+.helper-text {
+    margin-top: 0.25rem; 
+    margin-bottom: 0.25rem; 
+    color: #666;
+    font-size: 0.8rem;
+    text-align: left;
+    width: 100%;
+    padding: 0; 
+}
